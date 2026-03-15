@@ -1,144 +1,183 @@
-Dental Clinic Appointment System Specification
-1. System Title
+Dental Clinic Appointment System
+System Specification Document
+1. System Description
 
-Web-Based Dental Clinic Appointment Management System
+The Dental Clinic Appointment System is a web-based application designed to help patients conveniently schedule and manage dental appointments online. The system allows users to book appointments, view upcoming schedules, reschedule or cancel appointments, and manage their personal information.
 
-2. System Description
+The platform also provides support features such as FAQ, Help Center, and user profile management, ensuring that patients can easily access information and assistance when needed.
 
-The Dental Clinic Appointment System is a web-based application designed to simplify and organize the process of scheduling dental appointments. The system allows patients to book appointments online while the dentist, acting as the administrator, manages appointment schedules, patient records, and clinic services.
+This system improves clinic efficiency by reducing manual booking processes, minimizing scheduling conflicts, and allowing patients to manage their appointments anytime through an online interface.
 
-The system eliminates manual appointment booking and reduces scheduling conflicts. Patients can easily select their preferred appointment date and time, while the dentist can monitor, approve, or modify appointments through an administrative dashboard.
+2. System Objectives
 
-The system is developed using TypeScript and NestJS for the backend, with a MySQL database for storing patient and appointment data.
+The main objectives of the Dental Clinic Appointment System are:
 
-3. System Objectives
-General Objective
+Simplify appointment scheduling for dental patients.
 
-To develop a web-based system that allows patients to schedule dental appointments online while enabling the dentist to efficiently manage appointment schedules and patient records.
+Provide easy access for patients to manage their appointments.
 
-Specific Objectives
+Improve clinic efficiency by reducing manual booking.
 
-• To allow patients to create accounts and book dental appointments online.
-• To enable the dentist (administrator) to manage appointment schedules.
-• To store and manage patient information and appointment history.
-• To reduce manual booking and paperwork in the clinic.
-• To provide a clear and organized appointment schedule for the dentist.
+Allow patients to update their personal information and contact details.
 
-4. System Users
-🦷 Admin (Dentist)
+Provide support resources through FAQ and Help Center features.
 
-The dentist serves as the administrator of the system and has full control over clinic management features.
+Enhance user experience with an organized dashboard and simple navigation.
 
-Responsibilities:
+3. Functional Requirements
 
-Manage appointment schedules
+These describe the system functions that must be implemented.
 
-Approve or cancel appointments
+3.1 User Dashboard
 
-View patient information
+The system shall display a dashboard overview when the user logs in.
 
-Manage available appointment times
+The system shall show upcoming appointments.
 
-Monitor daily appointment lists
+The system shall display appointment status (Pending, Approved, Cancelled).
 
-👤 User (Patient)
+3.2 Appointment Booking
 
-The patient uses the system to schedule dental appointments.
+The system shall allow patients to book an appointment.
 
-Responsibilities:
+The system shall require users to input:
 
-Register and log in to the system
+Full name
 
-Book dental appointments
+Email address
 
-Select preferred appointment date and time
+Phone number
 
-View appointment status
+Appointment date
 
-Update personal information
+Appointment time
 
-5. Functional Requirements
-1. User Registration
+Type of service
 
-Patients can create accounts by entering their personal information such as name, contact number, and email address.
+Additional notes (optional)
 
-2. Login System
+The system shall store the appointment with Pending status.
 
-Both the admin (dentist) and patients can securely log into the system using authentication.
+3.3 Appointment Management
 
-3. Appointment Booking
+The system shall allow users to view all appointments.
 
-Patients can view available schedules and book a preferred date and time for dental consultation.
+The system shall allow users to cancel an appointment.
 
-4. Appointment Approval
+The system shall allow users to reschedule an appointment.
 
-The dentist can confirm, reschedule, or cancel appointments requested by patients.
+3.4 Profile Management
 
-5. Appointment Schedule Management
+The system shall display the user’s personal profile details.
 
-The system allows the dentist to view daily, weekly, and monthly appointment schedules.
+The system shall allow users to view appointment statistics.
 
-6. Patient Information Management
+The system shall show emergency contact information.
 
-The system stores and organizes patient records for future reference.
+3.5 Settings Management
 
-6. Non-Functional Requirements
+The system shall allow users to edit personal information.
 
-Security
+The system shall allow users to update contact details.
 
-Secure authentication for login
+The system shall allow users to change their password.
 
-Protection of patient data
+3.6 FAQ Feature
 
-Usability
+The system shall provide a Frequently Asked Questions section.
 
-User-friendly interface
+The system shall allow users to expand questions to view answers.
 
-Easy navigation for both patients and admin
+3.7 Help Center
 
-Performance
+The system shall provide contact information for the dental clinic.
 
-Fast loading of schedules and appointment pages
+The system shall provide guides and help topics for users.
 
-Reliability
+3.8 Logout
 
-Accurate appointment scheduling without duplication or conflicts
+The system shall allow users to securely log out of their account.
 
-7. Hardware Requirements
+4. Non-Functional Requirements
 
-Computer or Laptop
+These requirements define the quality attributes of the system.
 
-Internet Connection
+4.1 Usability
 
-Minimum 4GB RAM recommended
+The system must have a user-friendly interface.
 
-8. Software Requirements
+Navigation must be simple and accessible from the sidebar menu.
 
-Backend
+4.2 Performance
 
-Node.js
+Pages should load within 3 seconds or less.
 
-NestJS Framework
+The system should handle multiple users simultaneously without performance issues.
 
-TypeScript
+4.3 Security
 
-Frontend
+User login sessions must be securely managed.
 
-HTML
+Personal information must be protected from unauthorized access.
 
-CSS
+4.4 Reliability
+
+The system should maintain consistent operation without crashes.
+
+Appointment data must be accurately stored and retrieved.
+
+4.5 Availability
+
+The system should be accessible online 24/7 for patients.
+
+5. Hardware Requirements
+
+Minimum hardware required to run the system:
+
+Client Side
+
+Computer / Laptop / Smartphone
+
+Processor: Dual Core or higher
+
+RAM: Minimum 4 GB
+
+Storage: 500 MB free space
+
+Internet connection
+
+Server Side
+
+Processor: Intel i3 or higher
+
+RAM: Minimum 8 GB
+
+Storage: 50 GB or more
+
+Stable internet connection
+
+6. Software Requirements
+Operating System
+
+Windows 10 / Windows 11
+
+macOS
+
+Linux
+
+Development Tools
+
+HTML5
+
+CSS3
 
 JavaScript
 
-Database
+Node.js (if backend is used)
 
-MySQL (or MariaDB)
+Database (MySQL / MongoDB / PostgreSQL)
 
-Server Environment
-
-WAMP Server (Windows, Apache, MySQL, PHP)
-
-Browser
+Web Browser
 
 Google Chrome
 
@@ -146,12 +185,36 @@ Mozilla Firefox
 
 Microsoft Edge
 
-9. Expected Output
+Safari
 
-Organized and structured dental appointment schedule
+7. Expected Output
 
-Online appointment booking system for patients
+The expected outputs of the system include:
 
-Efficient management of patient visits
+Dashboard Interface
 
-Reduced scheduling conflicts and manual record keeping
+Displays upcoming appointments and appointment status.
+
+Appointment Booking Confirmation
+
+Displays confirmation when a patient successfully books an appointment.
+
+Appointment List
+
+Displays all scheduled appointments with details.
+
+User Profile Information
+
+Shows patient personal information and statistics.
+
+Updated Settings
+
+Displays updated user profile after saving changes.
+
+Help and FAQ Responses
+
+Provides assistance and answers to common questions.
+
+Logout Confirmation
+
+Redirects the user to the login page after logging out.
