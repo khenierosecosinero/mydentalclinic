@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Appointment</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Main Layout */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 200%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .error {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: nowrap;
+    }
+
+    .submenu {
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .submenu .menu-item {
+      font-size: 0.95rem;
+    }
+    button {
+      padding: 10px 24px;
+      min-width: 180px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .submit-btn {
+      background: #8503c1;
+      color: white;
+    }
+    .submit-btn:hover {
+      background: #57006f;
+    }
+    .clear-btn {
+      background: #f44336;
+      color: white;
+    }
+    .clear-btn:hover {
+      background: #da190b;
+    }
+    #confirmation {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #e8f5e8;
+      border: 1px solid #4caf50;
+      border-radius: 4px;
+    }
+    #confirmation h3 {
+      margin-top: 0;
+      color: #4caf50;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+
+    <div class="menu-item" onclick="location.href='dashboard.html'">
+      <span class="icon">🏠</span>
+      <span class="text">Dashboard</span>
+    </div>
+
+    <div class="menu-item active" onclick="location.href='book-appointment.html'">
+      <span class="icon">📅</span>
+      <span class="text">Book Appointment</span>
+    </div>
+    <div class="menu-item" onclick="location.href='my-appointments.html'">
+      <span class="icon">📋</span>
+      <span class="text">My Appointments</span>
+    </div>
+
+    <div class="menu-item" onclick="location.href='settings.html'">
+      <span class="icon">⚙️</span>
+      <span class="text">Settings</span>
+    </div>
+    <div class="submenu">
+      <div class="menu-item" onclick="location.href='faq_section.html'">
+        <span class="icon">❓</span>
+        <span class="text">FAQ</span>
+      </div>
+      <div class="menu-item" onclick="location.href='contact_help.html'">
+        <span class="icon">📞</span>
+        <span class="text">Help Center</span>
+      </div>
+    </div>
+
+    <div class="menu-item" onclick="location.href='profile.html'">
+      <span class="icon">👤</span>
+      <span class="text">Profile</span>
+    </div>
+
+    <div class="menu-item" id="logout" onclick="location.href='logout.html'">
+      <span class="icon">🚪</span>
+      <span class="text">Logout</span>
+    </div>
+
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h1>Book Appointment</h1>
+      <form id="appointmentForm">
+        <div class="form-group">
+          <label for="fullName">Patient Full Name *</label>
+          <input type="text" id="fullName" required>
+          <div class="error" id="fullNameError"></div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" required>
+          <div class="error" id="emailError"></div>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number *</label>
+          <input type="tel" id="phone" required>
+          <div class="error" id="phoneError"></div>
+        </div>
+        <div class="form-group">
+          <label for="date">Appointment Date *</label>
+          <input type="date" id="date" required>
+          <div class="error" id="dateError"></div>
+        </div>
+      <div class="form-group">
+        <label for="time">Appointment Time *</label>
+        <input type="time" id="time" required>
+        <div class="error" id="timeError"></div>
+      </div>
+      <div class="form-group">
+        <label for="service">Type of Service *</label>
+        <select id="service" required>
+          <option value="">Select service</option>
+          <option value="Dental Checkup">Dental Checkup</option>
+          <option value="Teeth Cleaning">Teeth Cleaning</option>
+          <option value="Tooth Extraction">Tooth Extraction</option>
+          <option value="Braces Consultation">Braces Consultation</option>
+          <option value="Other">Other</option>
+        </select>
+        <div class="error" id="serviceError"></div>
+      </div>
+      <div class="form-group">
+        <label for="notes">Additional Notes</label>
+        <textarea id="notes" rows="4"></textarea>
+      </div>
+      <div class="buttons">
+        <button type="submit" class="submit-btn">Book Appointment</button>
+      </div>
+    </form>
+    <div id="confirmation">
+      <h3>Appointment Booked Successfully!</h3>
+      <p>Your appointment request has been submitted. Please wait for dentist approval.</p>
+      <div id="summary"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    // Logout
+    const logoutBtn = document.getElementById('logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+      });
+    }
+
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    // Book appointment form
+    const appointmentForm = document.getElementById('appointmentForm');
+    if (appointmentForm) {
+      appointmentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // Clear previous errors
+        document.querySelectorAll('.error').forEach(el => el.textContent = '');
+        let isValid = true;
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const dentist = 'Dr. Smith';
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const service = document.getElementById('service').value;
+        const notes = document.getElementById('notes').value.trim();
+
+        // Validation
+        if (!fullName) {
+          document.getElementById('fullNameError').textContent = 'Full name is required.';
+          isValid = false;
+        }
+        if (!email) {
+          document.getElementById('emailError').textContent = 'Email is required.';
+          isValid = false;
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+          document.getElementById('emailError').textContent = 'Invalid email format.';
+          isValid = false;
+        }
+        if (!phone) {
+          document.getElementById('phoneError').textContent = 'Phone number is required.';
+          isValid = false;
+        }
+        if (!date) {
+          document.getElementById('dateError').textContent = 'Appointment date is required.';
+          isValid = false;
+        } else {
+          const selectedDate = new Date(date);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (selectedDate < today) {
+            document.getElementById('dateError').textContent = 'Appointment date cannot be in the past.';
+            isValid = false;
+          }
+        }
+        if (!time) {
+          document.getElementById('timeError').textContent = 'Appointment time is required.';
+          isValid = false;
+        }
+        if (!service) {
+          document.getElementById('serviceError').textContent = 'Please select a service.';
+          isValid = false;
+        }
+
+        if (!isValid) return;
+
+        try {
+          const res = await fetch(`${API_BASE}/appointments`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({ fullName, email, phone, dentist, date, time, service, notes }),
+          });
+          if (res.ok) {
+            // Show confirmation
+            document.getElementById('confirmation').style.display = 'block';
+            document.getElementById('summary').innerHTML = `
+              <p><strong>Patient:</strong> ${fullName}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Phone:</strong> ${phone}</p>
+                  <p><strong>Date:</strong> ${new Date(date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${time}</p>
+              <p><strong>Service:</strong> ${service}</p>
+              <p><strong>Notes:</strong> ${notes || 'None'}</p>
+            `;
+            appointmentForm.reset();
+          } else {
+            alert('Failed to book appointment.');
+          }
+        } catch (error) {
+          console.error('Error booking appointment:', error);
+          alert('An error occurred. Please try again.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

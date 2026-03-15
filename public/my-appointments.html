@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Appointments</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Sidebar styles are in styles.css */
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+      transition: margin-left 0.3s;
+    }
+    .sidebar.collapsed + .main-content {
+      margin-left: 60px;
+    }
+
+    /* Appointments Styles */
+    .appointments-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .appointments-container h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+    .appointments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .appointment-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 4px solid #cc51f1;
+    }
+    .appointment-info h3 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+    .appointment-info p {
+      margin: 5px 0;
+      color: #666;
+    }
+    .status-badge {
+      padding: 8px 12px;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .status-pending { background: #f39c12; }
+    .status-approved { background: #27ae60; }
+    .status-cancelled { background: #e74c3c; }
+
+    .cancel-btn {
+    padding: 8px 30px;
+    border: none;
+    border-radius: 12px;
+    background: #e74c3c;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;   /* horizontal center */
+    align-items: center;       /* vertical center */
+    transition: background 0.2s ease;
+}
+
+    .cancel-btn:hover:not(:disabled) {
+      background: #c0392b;
+    }
+
+    .cancel-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .reschedule-btn,
+    .reschedule-submit-btn {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 12px;
+      background: #2d9cdb;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.2s ease;
+      min-width: 140px;
+      white-space: nowrap;
+    }
+
+    .reschedule-btn:hover,
+    .reschedule-submit-btn:hover {
+      background: #1b7bb6;
+    }
+
+    /* Reschedule modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 2000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 12px;
+      width: min(420px, 90%);
+      padding: 18px 18px 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #2c3e50;
+    }
+
+    .modal .field {
+      margin-bottom: 10px;
+    }
+
+    .modal label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .modal input {
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .modal .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .modal .error {
+      margin-top: 8px;
+      color: #e74c3c;
+      font-size: 13px;
+    }
+
+    .no-appointments {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      margin-top: 50px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .appointment-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="menu-item" onclick="location.href='dashboard.html'">
+      <span class="icon">🏠</span>
+      <span class="text">Dashboard</span>
+    </div>
+    <div class="menu-item" onclick="location.href='book-appointment.html'">
+      <span class="icon">📅</span>
+      <span class="text">Book Appointment</span>
+    </div>
+    <div class="menu-item active" onclick="location.href='my-appointments.html'">
+      <span class="icon">📋</span>
+      <span class="text">My Appointments</span>
+    </div>
+    <div class="menu-item" onclick="location.href='settings.html'">
+      <span class="icon">⚙️</span>
+      <span class="text">Settings</span>
+    </div>
+    <div class="submenu">
+      <div class="menu-item" onclick="location.href='faq_section.html'">
+        <span class="icon">❓</span>
+        <span class="text">FAQ</span>
+      </div>
+      <div class="menu-item" onclick="location.href='contact_help.html'">
+        <span class="icon">📞</span>
+        <span class="text">Help Center</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="location.href='profile.html'">
+      <span class="icon">👤</span>
+      <span class="text">Profile</span>
+    </div>
+    <div class="menu-item" id="logout">
+      <span class="icon">🚪</span>
+      <span class="text">Logout</span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="appointments-container">
+      <h1>My Appointments</h1>
+      <div id="appointmentFeedback" style="display:none; padding: 12px; border-radius: 8px; background: #e6ffed; color: #1a3d1a; margin-bottom: 16px;"></div>
+      <div id="appointments" class="appointments-list">
+        <!-- Appointments will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reschedule modal -->
+  <div id="rescheduleModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rescheduleTitle">
+    <div class="modal">
+      <h3 id="rescheduleTitle">Reschedule Appointment</h3>
+      <div class="field">
+        <label for="rescheduleDate">New Date</label>
+        <input type="date" id="rescheduleDate" />
+      </div>
+      <div class="field">
+        <label for="rescheduleTime">New Time</label>
+        <input type="time" id="rescheduleTime" />
+      </div>
+      <div class="error" id="rescheduleError" aria-live="polite"></div>
+      <div class="actions">
+        <button type="button" id="rescheduleCancel" class="cancel-btn">Cancel</button>
+        <button type="button" id="rescheduleSubmit" class="reschedule-submit-btn">Update Appointment</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    // Sidebar functionality
+    const sidebar = document.getElementById('sidebar');
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    menuItems.forEach(item => {
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('role', 'button');
+
+      item.addEventListener('click', () => {
+        const href = item.getAttribute('onclick');
+        if (href && href.includes('location.href=')) {
+          const url = href.match(/location\.href='([^']+)'/)[1];
+          window.location.href = url;
+        }
+      });
+
+      item.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          item.click();
+        }
+      });
+    });
+
+    // Logout functionality
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+
+    // Load appointments
+    async function loadAppointments() {
+      try {
+        const res = await fetch(`${API_BASE}/appointments/my`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        const appointments = await res.json();
+        const div = document.getElementById('appointments');
+        if (appointments.length === 0) {
+          div.innerHTML = '<p class="no-appointments">No appointments found.</p>';
+        } else {
+          div.innerHTML = appointments.map(a => {
+          const canCancel = (a.status || '').toLowerCase() === 'pending';
+          const canReschedule = canCancel;
+          return `
+            <div class="appointment-card">
+              <div class="appointment-info">
+                <h3>Dentist Appointment</h3>
+                <p><strong>Date:</strong> ${new Date(a.date).toLocaleDateString()}</p>
+                <p><strong>Time:</strong> ${a.time}</p>
+                <p><strong>Service:</strong> ${a.service || 'General Checkup'}</p>
+                <p><strong>Dentist:</strong> ${a.dentist || 'Dr. Smith'}</p>
+                ${a.notes ? `<p><strong>Notes:</strong> ${a.notes}</p>` : ''}
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span class="status-badge status-${a.status.toLowerCase()}">${a.status}</span>
+                ${canReschedule ? `<button class="reschedule-btn" data-id="${a.id}" data-date="${a.date}" data-time="${a.time}">Reschedule</button>` : ''}
+                <button class="cancel-btn" data-id="${a.id}" ${canCancel ? '' : 'disabled'}>${canCancel ? 'Cancel' : 'Locked'}</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+        }
+      } catch (error) {
+        console.error('Error loading appointments:', error);
+        document.getElementById('appointments').innerHTML = '<p class="no-appointments">Error loading appointments.</p>';
+      }
+    }
+
+    // Cancel appointment
+    async function cancelAppointment(appointmentId) {
+      if (!confirm('Cancel this appointment?')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/appointments/${appointmentId}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+
+        if (!res.ok) {
+          console.error('Failed to cancel appointment', await res.text());
+          alert('Could not cancel appointment.');
+          return;
+        }
+
+        loadAppointments();
+      } catch (error) {
+        console.error('Error cancelling appointment:', error);
+        alert('Error cancelling appointment.');
+      }
+    }
+
+    // Reschedule functionality
+    let currentRescheduleId = null;
+
+    function showFeedback(message) {
+      const feedback = document.getElementById('appointmentFeedback');
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.style.display = 'block';
+      setTimeout(() => { feedback.style.display = 'none'; }, 5000);
+    }
+
+    function openRescheduleModal(id, date, time) {
+      currentRescheduleId = id;
+      const modal = document.getElementById('rescheduleModal');
+      const dateInput = document.getElementById('rescheduleDate');
+      const timeInput = document.getElementById('rescheduleTime');
+      const error = document.getElementById('rescheduleError');
+
+      if (!modal || !dateInput || !timeInput || !error) return;
+
+      error.textContent = '';
+      // Convert date to YYYY-MM-DD (handle ISO strings)
+      const dateValue = date ? date.split('T')[0] : '';
+      dateInput.value = dateValue;
+      timeInput.value = time || '';
+      modal.classList.add('active');
+      dateInput.focus();
+    }
+
+    function closeRescheduleModal() {
+      currentRescheduleId = null;
+      const modal = document.getElementById('rescheduleModal');
+      const error = document.getElementById('rescheduleError');
+      if (modal) modal.classList.remove('active');
+      if (error) error.textContent = '';
+    }
+
+    function validateReschedule(dateStr, timeStr) {
+      if (!dateStr || !timeStr) return 'Please choose a date and time.';
+      const now = new Date();
+      const selected = new Date(`${dateStr}T${timeStr}`);
+      if (selected < now) return 'Please pick a date/time in the future.';
+      return '';
+    }
+
+    async function submitReschedule() {
+      if (!currentRescheduleId) return;
+      const dateInput = document.getElementById('rescheduleDate');
+      const timeInput = document.getElementById('rescheduleTime');
+      const errorEl = document.getElementById('rescheduleError');
+      if (!dateInput || !timeInput || !errorEl) return;
+
+      const error = validateReschedule(dateInput.value, timeInput.value);
+      if (error) {
+        errorEl.textContent = error;
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/appointments/${currentRescheduleId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({ date: dateInput.value, time: timeInput.value }),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          errorEl.textContent = `Unable to reschedule: ${text || res.statusText}`;
+          return;
+        }
+
+        closeRescheduleModal();
+        showFeedback('Your appointment has been successfully rescheduled and is pending approval.');
+        loadAppointments();
+      } catch (err) {
+        console.error('Reschedule error:', err);
+        errorEl.textContent = 'Something went wrong. Please try again.';
+      }
+    }
+
+    // Handle button actions
+    document.addEventListener('click', (event) => {
+      const rescheduleBtn = event.target.closest('.reschedule-btn');
+      if (rescheduleBtn) {
+        const id = rescheduleBtn.getAttribute('data-id');
+        const date = rescheduleBtn.getAttribute('data-date');
+        const time = rescheduleBtn.getAttribute('data-time');
+        if (id) openRescheduleModal(id, date, time);
+        return;
+      }
+
+      const modalOverlay = event.target.closest('#rescheduleModal');
+      if (modalOverlay && event.target === modalOverlay) {
+        closeRescheduleModal();
+        return;
+      }
+
+      const cancelModalBtn = event.target.closest('#rescheduleCancel');
+      if (cancelModalBtn) {
+        closeRescheduleModal();
+        return;
+      }
+
+      const button = event.target.closest('.cancel-btn');
+      if (!button || button.closest('#rescheduleModal')) return;
+      const id = button.getAttribute('data-id');
+      if (!id) return;
+      cancelAppointment(id);
+    });
+
+    document.getElementById('rescheduleSubmit').addEventListener('click', submitReschedule);
+
+    // Load appointments on page load
+    loadAppointments();
+  </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ Section</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Accordion / FAQ styles */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+
+    .accordion {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .accordion-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .accordion-question {
+      padding: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #b60bff;
+      color: white;
+      text-align: center;
+    }
+
+    .accordion-question:hover {
+      background: #7000ac;
+    }
+
+    .accordion-question::after {
+      content: '\002B';
+      font-size: 20px;
+      line-height: 1;
+      transition: transform 150ms ease;
+    }
+
+    .accordion-question.active::after {
+      content: '\2212';
+    }
+
+    .accordion-answer {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 16px;
+      transition: max-height 200ms ease, padding 200ms ease;
+      background: #fff;
+      text-align: center;
+    }
+
+    .accordion-answer.open {
+      padding: 16px;
+    }
+
+    .submenu {
+      padding-left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .submenu .menu-item {
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="menu-item" onclick="location.href='dashboard.html'">
+      <span class="icon">🏠</span>
+      <span class="text">Dashboard</span>
+    </div>
+
+    <div class="menu-item" onclick="location.href='book-appointment.html'">
+      <span class="icon">📅</span>
+      <span class="text">Book Appointment</span>
+    </div>
+
+    <div class="menu-item" onclick="location.href='my-appointments.html'">
+      <span class="icon">📋</span>
+      <span class="text">My Appointments</span>
+    </div>
+
+    <div class="menu-item" onclick="location.href='settings.html'">
+      <span class="icon">⚙️</span>
+      <span class="text">Settings</span>
+    </div>
+    <div class="submenu">
+      <div class="menu-item" onclick="location.href='faq_section.html'">
+        <span class="icon">❓</span>
+        <span class="text">FAQ</span>
+      </div>
+      <div class="menu-item" onclick="location.href='contact_help.html'">
+        <span class="icon">📞</span>
+        <span class="text">Help Center</span>
+      </div>
+    </div>
+
+    <div class="menu-item" onclick="location.href='profile.html'">
+      <span class="icon">👤</span>
+      <span class="text">Profile</span>
+    </div>
+
+    <div class="menu-item" id="logout" onclick="location.href='logout.html'">
+      <span class="icon">🚪</span>
+      <span class="text">Logout</span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h1>FAQ Section</h1>
+
+      <div class="accordion" id="faqAccordion">
+        <div class="accordion-item">
+          <div class="accordion-question">How do I book an appointment?</div>
+          <div class="accordion-answer">
+            <p>To book an appointment, go to the "Book Appointment" page, fill out the form with your details, select a dentist, choose a date and time, then click "Book Appointment." You will receive a confirmation once the appointment is submitted.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-question">How can I cancel or reschedule my appointment?</div>
+          <div class="accordion-answer">
+            <p>You can cancel or reschedule your appointment by going to the "My Appointments" page. Find the appointment you want to change, then use the provided options (cancel/reschedule). If there is no direct option, contact the clinic directly.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-question">How do I know if my appointment is approved?</div>
+          <div class="accordion-answer">
+            <p>Once your appointment request is reviewed, you will see the status update on the "My Appointments" page. Approved appointments will be marked as approved.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-question">What services does the clinic offer?</div>
+          <div class="accordion-answer">
+            <p>The clinic offers a range of dental services including checkups, teeth cleaning, extractions, braces consultations, and other general dental care. Check the "Type of Service" options when booking an appointment for the full list.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-question">How will I receive appointment notifications?</div>
+          <div class="accordion-answer">
+            <p>Appointment notifications appear in your account dashboard. Depending on the system setup, you may also receive email notifications about booking confirmations, approval status, and reminders.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // FAQ accordion toggle behavior
+    document.querySelectorAll('.accordion-question').forEach((question) => {
+      question.addEventListener('click', () => {
+        question.classList.toggle('active');
+        const answer = question.nextElementSibling;
+
+        // Toggle the open/closed state
+        if (question.classList.contains('active')) {
+          answer.classList.add('open');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
+        } else {
+          answer.classList.remove('open');
+          answer.style.maxHeight = '0';
+        }
+      });
+    });
+
+    // Logout behavior (shared sidebar code)
+    const logoutBtn = document.getElementById('logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+      });
+    }
+  </script>
+</body>
+</html>

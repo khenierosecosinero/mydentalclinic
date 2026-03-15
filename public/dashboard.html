@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    div {
+      display: block;
+      unicode-bidi: isolate;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    .main-content {
+      margin-left: 250px;
+      padding: 24px;
+    }
+
+    .dashboard-header {
+      margin-bottom: 28px;
+    }
+
+    .dashboard-header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .dashboard-header p {
+      margin: 6px 0 0;
+      color: #4b5563;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+      padding: 18px 20px;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: #111827;
+    }
+
+    .appointments-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    .appointments-table th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .status-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .status-item {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      min-width: 150px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-pending {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .status-approved {
+      background: #d1fae5;
+      color: #047857;
+    }
+
+    .status-cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .quick-link {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+
+    .quick-link:hover {
+      transform: translateY(-2px);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+
+    <div class="menu-item active" onclick="location.href='dashboard.html'">
+      <span class="icon">🏠</span>
+      <span class="text">Dashboard</span>
+    </div>
+
+    <div class="menu-item" onclick="location.href='book-appointment.html'">
+      <span class="icon">📅</span>
+      <span class="text">Book Appointment</span>
+    </div>
+    <div class="menu-item" onclick="location.href='my-appointments.html'">
+      <span class="icon">📋</span>
+      <span class="text">My Appointments</span>
+    </div>
+
+    <div class="menu-item" onclick="location.href='settings.html'">
+      <span class="icon">⚙️</span>
+      <span class="text">Settings</span>
+    </div>
+    <div class="submenu">
+      <div class="menu-item" onclick="location.href='faq_section.html'">
+        <span class="icon">❓</span>
+        <span class="text">FAQ</span>
+      </div>
+      <div class="menu-item" onclick="location.href='contact_help.html'">
+        <span class="icon">📞</span>
+        <span class="text">Help Center</span>
+      </div>
+    </div>
+
+    <div class="menu-item" onclick="location.href='profile.html'">
+      <span class="icon">👤</span>
+      <span class="text">Profile</span>
+    </div>
+
+    <div class="menu-item" id="logout" onclick="location.href='logout.html'">
+      <span class="icon">🚪</span>
+      <span class="text">Logout</span>
+    </div>
+
+  </div>
+
+  <main class="main-content">
+    <div class="dashboard-header">
+      <h1 id="welcome-message">Welcome</h1>
+      <p>Keep track of your upcoming care and stay on top of your appointments.</p>
+    </div>
+
+    <div class="card">
+      <h3>Upcoming Appointments</h3>
+      <table class="appointments-table" id="upcoming-appointments">
+        <thead>
+          <tr>
+            <th>Dentist</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Service</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" style="text-align:center; color:#6b7280;">Loading…</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px;">
+        <a class="quick-link" href="my-appointments.html">Go to My Appointments</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Appointment Status</h3>
+      <div class="status-list" id="appointment-status">
+        <div class="status-item status-pending">Pending: 0</div>
+        <div class="status-item status-approved">Approved: 0</div>
+        <div class="status-item status-cancelled">Cancelled: 0</div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    let currentUserId = null;
+
+    // Ensure logout works from this page
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+
+    async function loadUser() {
+      try {
+        const res = await fetch('http://localhost:3000/users/me', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        const user = await res.json();
+        currentUserId = user.id;
+        document.getElementById('welcome-message').textContent = `Welcome, ${user.fullName || user.name || 'Patient'}`;
+      } catch (err) {
+        console.error('Failed to load user:', err);
+      }
+    }
+
+    async function loadUpcomingAppointments() {
+      try {
+        const res = await fetch('http://localhost:3000/appointments/my', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        const appointments = await res.json();
+        const tbody = document.querySelector('#upcoming-appointments tbody');
+        const upcoming = appointments.filter(a => new Date(a.date) >= new Date());
+
+        if (!upcoming.length) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#6b7280;">No upcoming appointments</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = upcoming
+          .map(a => `
+            <tr>
+              <td>${a.dentist || 'TBD'}</td>
+              <td>${new Date(a.date).toLocaleDateString()}</td>
+              <td>${a.time || 'TBD'}</td>
+              <td>${a.service || 'General'}</td>
+            </tr>
+          `)
+          .join('');
+      } catch (err) {
+        console.error('Failed to load appointments:', err);
+      }
+    }
+
+    async function loadAppointmentStatus() {
+      try {
+        const res = await fetch('http://localhost:3000/appointments/my', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        const appointments = await res.json();
+        const counts = { pending: 0, approved: 0, cancelled: 0 };
+        appointments.forEach(a => {
+          const status = (a.status || '').toLowerCase();
+          if (status in counts) counts[status]++;
+        });
+        document.querySelector('.status-pending').textContent = `Pending: ${counts.pending}`;
+        document.querySelector('.status-approved').textContent = `Approved: ${counts.approved}`;
+        document.querySelector('.status-cancelled').textContent = `Cancelled: ${counts.cancelled}`;
+      } catch (err) {
+        console.error('Failed to load status:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      await loadUser();
+      loadUpcomingAppointments();
+      loadAppointmentStatus();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Sidebar styles are in styles.css */
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="menu-item" onclick="location.href='dashboard.html'">
+      <span class="icon">🏠</span>
+      <span class="text">Dashboard</span>
+    </div>
+    <div class="menu-item" data-nav="book-appointment">
+      <span class="icon">📅</span>
+      <span class="text">Book Appointment</span>
+    </div>
+    <div class="menu-item active" data-nav="admin">
+      <span class="icon">👨‍⚕️</span>
+      <span class="text">Admin Dashboard</span>
+    </div>
+    <div class="menu-item" id="logout">
+      <span class="icon">🚪</span>
+      <span class="text">Logout</span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1>Admin Dashboard</h1>
+    <h2>All Appointments</h2>
+    <div id="appointments"></div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Sidebar navigation
+    const sidebarItems = document.querySelectorAll('.sidebar .menu-item');
+    sidebarItems.forEach(item => {
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('role', 'button');
+
+      const nav = item.getAttribute('data-nav');
+      item.addEventListener('click', () => {
+        if (nav === 'book-appointment') {
+          window.location.href = 'book-appointment.html';
+        } else if (nav === 'admin') {
+          // Stay on admin page
+        }
+      });
+
+      item.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          item.click();
+        }
+      });
+    });
+
+    // Logout
+    const logoutBtn = document.getElementById('logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+      });
+    }
+  </script>
+</body>
+</html>
