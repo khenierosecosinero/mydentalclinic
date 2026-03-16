@@ -27,5 +27,11 @@ I implemented a Help Center page that displays the clinic’s contact informatio
 Problems / Challenges Encountered:
 One difficulty was organizing the help topics so they would be easy for users to understand and navigate. I also had to ensure the layout aligned with the design of the other pages in the system and that the search bar and information sections were clearly displayed.
 
+feature 1:
+![alt text](faq1.png)
+![alt text](<faq2 (4).png>)
+![alt text](faq3.png)
 
-![alt text](help2.png) ![alt text](faq1.png) ![alt text](<faq2 (4).png>) ![alt text](faq3.png) ![alt text](<help1 (6).png>)
+feature 2
+![alt text](<help1 (6).png>)
+![alt text](help2.png)
