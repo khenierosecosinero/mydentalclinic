@@ -1,28 +1,45 @@
-# API Design (Future)
+# API Design
 
-## Endpoint: Book Appointment
-POST /api/appointments
+## Base URL
+/api/v1
 
-Request:
+## Endpoints
+
+### Authentication
+POST /login  
+POST /logout  
+
+### Users
+GET /users/profile  
+PUT /users/profile  
+
+### Appointments
+GET /appointments  
+POST /appointments  
+PUT /appointments/{id}  
+DELETE /appointments/{id}  
+
+### FAQ
+GET /faq  
+
+### Help
+GET /help  
+
+## Example Request
+
+POST /appointments
 {
-  name,
-  email,
-  phone,
-  date,
-  time,
-  service
+  "name": "John Doe",
+  "email": "john@email.com",
+  "phone": "123456789",
+  "date": "2026-04-10",
+  "time": "10:00",
+  "service": "Cleaning",
+  "notes": "Tooth sensitivity"
 }
 
-Response:
+## Example Response
 {
-  status: "success",
-  message: "Appointment booked"
+  "status": "Pending",
+  "message": "Appointment created successfully"
 }
-
-## Endpoint: Get Help Topics
-GET /api/help
-
-Response:
-[
-  { title: "Booking Guide", content: "..." }
-]

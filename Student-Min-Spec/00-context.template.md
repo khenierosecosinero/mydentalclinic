@@ -1,21 +1,20 @@
-# Context
+# System Context
 
-## App Name
-Dental Clinic Appointment System
-
-## Problem
-Patients currently book appointments manually, which can cause scheduling conflicts, delays, and inconvenience.
-
-## Solution
-A web-based system that allows patients to book, manage, and view dental appointments online.
+## Overview
+The Dental Clinic Appointment System is a web-based application that allows patients to book, manage, and track dental appointments online.
 
 ## Users
-- Patients (primary users)
+- Patients (Primary users)
+- Clinic Staff (admin)
+## External Systems
+- Email Service (for notifications)
+- Database System (MySQL/MongoDB/PostgreSQL)
 
-## Key Features
-- Appointment Booking
-- FAQ Section
-- Help Center
+## Assumptions
+- Users have internet access
+- Users can operate a web browser
+- Clinic operates on a fixed schedule
 
-## Scope
-Frontend-based system with potential backend integration for storing appointments and user data.
+## Constraints
+- Web-based only
+- Requires login for full functionality

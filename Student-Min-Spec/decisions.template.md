@@ -1,19 +1,20 @@
-# Dental Clinic Appointment System
+# Design Decisions
 
-## Features
-1. FAQ Section
-2. Help Center
-3. Appointment Booking
+## Technology Stack
+- Frontend: HTML, CSS, JavaScript
+- Backend: Node.js (optional)
+- Database: MySQL / MongoDB
 
-## What I Implemented
+## Architecture
+- Client-server architecture
+
+## UI Design
 - Sidebar navigation
-- FAQ with expand/collapse functionality
-- Help Center with contact info and guides
+- Dashboard layout
 
-## Mini Specs
-Each feature includes expected behavior, test cases, and edge cases documented in this folder.
+## Security
+- Session-based authentication
+- Password encryption
 
-## Challenges
-- Designing clear UI navigation
-- Managing component state (FAQ toggle)
-- Planning future backend integration
+## Data Handling
+- CRUD operations for appointments

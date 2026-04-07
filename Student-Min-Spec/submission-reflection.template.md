@@ -1,13 +1,19 @@
-# Reflection
+# Submission Reflection
 
 ## What I Learned
-I learned how to think like an engineer by defining expected behavior and writing test cases before coding.
+- How to design a system specification
+- Understanding user requirements
+- Structuring a web-based application
 
-## Challenges
-Understanding how to design realistic test cases without writing actual code was challenging.
+## Challenges Faced
+- Designing system architecture
+- Defining clear requirements
+- Handling edge cases
 
 ## Improvements
-Next time, I would connect the system to a backend API for full functionality.
+- Add admin panel
+- Add notification system
+- Improve UI/UX design
 
-## Final Thoughts
-This process helped me understand the importance of testing and planning in software development.
+## Conclusion
+This project helped me understand how real-world systems are planned and structured before development.

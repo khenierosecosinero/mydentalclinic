@@ -1,11 +1,25 @@
 # Acceptance Criteria
 
-## FAQ Feature
-- User can open FAQ page from sidebar.
-- Clicking a question shows the answer.
-- Only one question is expanded at a time.
+## Booking Appointment
+- User fills all required fields
+- Clicks submit
+- System stores appointment as "Pending"
+- Confirmation message is shown
 
-## Help Center Feature
-- User can open Help Center page.
-- Contact information is visible.
-- Help topics are displayed correctly.
+## Viewing Appointments
+- User can see all booked appointments
+- Status is clearly displayed
+
+## Cancel Appointment
+- User selects appointment
+- Clicks cancel
+- Status updates to "Cancelled"
+
+## Reschedule Appointment
+- User selects appointment
+- Chooses new date/time
+- System updates successfully
+
+## Login
+- Valid credentials allow access
+- Invalid credentials show error

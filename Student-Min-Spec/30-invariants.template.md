@@ -1,6 +1,11 @@
-# Invariants (Must Always Be True)
+# System Invariants
 
-- An appointment must always have a date and time.
-- FAQ answers must match the correct questions.
-- Help Center must always display contact information.
-- Users should not see empty or broken pages.
+- Each appointment must have a valid date and time
+- Appointment status must be one of:
+  - Pending
+  - Approved
+  - Cancelled
+- Users must be authenticated to manage appointments
+- Email must be unique per user
+- Appointment time slots must not overlap
+- Required fields must not be empty

@@ -1,19 +1,24 @@
 # Dental Clinic Appointment System
 
+## Description
+A web-based system that allows patients to book and manage dental appointments online.
+
 ## Features
-1. FAQ Section
-2. Help Center
-3. Appointment Booking
+- Appointment booking
+- Appointment management
+- User dashboard
+- Profile settings
+- FAQ and Help Center
 
-## What I Implemented
-- Sidebar navigation
-- FAQ with expand/collapse functionality
-- Help Center with contact info and guides
+## Technologies Used
+- HTML, CSS, JavaScript
+- Node.js (optional)
+- Database (MySQL/MongoDB/PostgreSQL)
 
-## Mini Specs
-Each feature includes expected behavior, test cases, and edge cases documented in this folder.
+## How to Run
+1. Install dependencies
+2. Start server
+3. Open in browser
 
-## Challenges
-- Designing clear UI navigation
-- Managing component state (FAQ toggle)
-- Planning future backend integration
+## Author
+[Your Name]
