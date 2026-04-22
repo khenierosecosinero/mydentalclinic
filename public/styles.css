@@ -26,25 +26,35 @@ button:hover {
   background: #cc51f1;
 }
 
-/* Shared sidebar styles */
+/* Shared sidebar styles (user-facing: vibrant purple, dark active strip) */
 .sidebar {
   display: flex;
   flex-direction: column;
   width: 250px;
   height: 100vh;
-  background: linear-gradient(135deg, #c870ff 0%, #b01fff 100%);
-  color: white;
+  box-sizing: border-box;
+  background: #a020f0;
+  color: #ffffff;
   position: fixed;
   left: 0;
   top: 0;
   padding-top: 20px;
+  padding-bottom: 16px;
   z-index: 1000;
   transition: width 0.3s;
 }
 
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .sidebar #logout {
+  flex-shrink: 0;
   margin-top: auto;
-  margin-bottom: 16px;
 }
 
 .sidebar.collapsed {
@@ -66,22 +76,29 @@ button:hover {
 }
 
 .sidebar .menu-item:hover {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.12);
 }
 
 .sidebar .menu-item.active {
-  background-color: #5a0275;
+  background-color: #5e0080;
 }
 
 .sidebar .submenu {
-  padding-left: 20px;
+  padding-left: 12px;
+  margin-left: 8px;
+  border-left: 2px solid rgba(255, 255, 255, 0.35);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .sidebar .submenu .menu-item {
   font-size: 0.95rem;
+  padding-left: 12px;
+}
+
+.sidebar .submenu .menu-item.active {
+  background-color: #5e0080;
 }
 
 .sidebar .icon {

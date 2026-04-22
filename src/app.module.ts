@@ -1,8 +1,18 @@
+import { existsSync } from 'fs';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+
+/** Prefer repo `public/` (works with `nest build` only); else `dist/public` after full `npm run build`. */
+function resolvePublicRoot(): string {
+  const fromCwd = join(process.cwd(), 'public');
+  const fromDist = join(__dirname, '..', 'public');
+  if (existsSync(join(fromCwd, 'index.html'))) return fromCwd;
+  if (existsSync(join(fromDist, 'index.html'))) return fromDist;
+  return fromCwd;
+}
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -10,6 +20,8 @@ import { UsersModule } from './users/users.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { User } from './entities/user.entity';
 import { Appointment } from './entities/appointment.entity';
+import { Notification } from './entities/notification.entity';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -37,7 +49,7 @@ import { Appointment } from './entities/appointment.entity';
             username: config.get<string>('DB_USERNAME', 'root'),
             password: config.get<string>('DB_PASSWORD', ''),
             database: config.get<string>('DB_NAME', 'dental_clinic'),
-            entities: [User, Appointment],
+            entities: [User, Appointment, Notification],
             synchronize: true, // Use false in production
           };
         }
@@ -45,17 +57,20 @@ import { Appointment } from './entities/appointment.entity';
         return {
           type: 'sqlite' as const,
           database: config.get<string>('SQLITE_PATH', './data/dental_clinic.sqlite'),
-          entities: [User, Appointment],
+          entities: [User, Appointment, Notification],
           synchronize: true,
         };
       },
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
     AuthModule,
     UsersModule,
     AppointmentsModule,
+    NotificationsModule,
+    // Register static files after API modules so routes like /appointments/admin/summary
+    // are handled by controllers instead of the static middleware.
+    ServeStaticModule.forRoot({
+      rootPath: resolvePublicRoot(),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -59,6 +59,7 @@
     }
     .status-pending { background: #f39c12; }
     .status-approved { background: #27ae60; }
+    .status-completed { background: #2563eb; }
     .status-cancelled { background: #e74c3c; }
 
     .cancel-btn {
@@ -187,35 +188,37 @@
 </head>
 <body>
   <div class="sidebar" id="sidebar">
-    <div class="menu-item" onclick="location.href='dashboard.html'">
-      <span class="icon">🏠</span>
-      <span class="text">Dashboard</span>
-    </div>
-    <div class="menu-item" onclick="location.href='book-appointment.html'">
-      <span class="icon">📅</span>
-      <span class="text">Book Appointment</span>
-    </div>
-    <div class="menu-item active" onclick="location.href='my-appointments.html'">
-      <span class="icon">📋</span>
-      <span class="text">My Appointments</span>
-    </div>
-    <div class="menu-item" onclick="location.href='settings.html'">
-      <span class="icon">⚙️</span>
-      <span class="text">Settings</span>
-    </div>
-    <div class="submenu">
-      <div class="menu-item" onclick="location.href='faq_section.html'">
-        <span class="icon">❓</span>
-        <span class="text">FAQ</span>
+    <div class="sidebar-nav">
+      <div class="menu-item" onclick="location.href='dashboard.html'">
+        <span class="icon">🏠</span>
+        <span class="text">Dashboard</span>
       </div>
-      <div class="menu-item" onclick="location.href='contact_help.html'">
-        <span class="icon">📞</span>
-        <span class="text">Help Center</span>
+      <div class="menu-item" onclick="location.href='book-appointment.html'">
+        <span class="icon">📅</span>
+        <span class="text">Book Appointment</span>
       </div>
-    </div>
-    <div class="menu-item" onclick="location.href='profile.html'">
-      <span class="icon">👤</span>
-      <span class="text">Profile</span>
+      <div class="menu-item active" onclick="location.href='my-appointments.html'">
+        <span class="icon">📋</span>
+        <span class="text">My Appointments</span>
+      </div>
+      <div class="menu-item" onclick="location.href='settings.html'">
+        <span class="icon">⚙️</span>
+        <span class="text">Settings</span>
+      </div>
+      <div class="submenu">
+        <div class="menu-item" onclick="location.href='faq_section.html'">
+          <span class="icon">❓</span>
+          <span class="text">FAQ</span>
+        </div>
+        <div class="menu-item" onclick="location.href='contact_help.html'">
+          <span class="icon">📞</span>
+          <span class="text">Help Center</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="location.href='profile.html'">
+        <span class="icon">👤</span>
+        <span class="text">Profile</span>
+      </div>
     </div>
     <div class="menu-item" id="logout">
       <span class="icon">🚪</span>
@@ -255,12 +258,20 @@
 
   <script>
     const API_BASE = 'http://localhost:3000';
+    function decodePayload(jwt) {
+      try {
+        return JSON.parse(atob(jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      } catch (error) {
+        return null;
+      }
+    }
 
     // Sidebar functionality
     const sidebar = document.getElementById('sidebar');
     const menuItems = document.querySelectorAll('.menu-item');
 
     menuItems.forEach(item => {
+      if (item.id === 'logout') return;
       item.setAttribute('tabindex', '0');
       item.setAttribute('role', 'button');
 
@@ -283,6 +294,7 @@
     // Logout functionality
     document.getElementById('logout').addEventListener('click', () => {
       localStorage.removeItem('token');
+      localStorage.removeItem('role');
       window.location.href = 'login.html';
     });
 
@@ -298,7 +310,14 @@
           div.innerHTML = '<p class="no-appointments">No appointments found.</p>';
         } else {
           div.innerHTML = appointments.map(a => {
-          const canCancel = (a.status || '').toLowerCase() === 'pending';
+          const statusKey = (a.status || 'pending').toLowerCase();
+          const statusLabel = {
+            pending: 'Pending',
+            approved: 'Approved',
+            completed: 'Completed',
+            cancelled: 'Cancelled',
+          }[statusKey] || (a.status ? String(a.status).replace(/^./, (c) => c.toUpperCase()) : 'Pending');
+          const canCancel = statusKey === 'pending';
           const canReschedule = canCancel;
           return `
             <div class="appointment-card">
@@ -310,10 +329,10 @@
                 <p><strong>Dentist:</strong> ${a.dentist || 'Dr. Calang'}</p>
                 ${a.notes ? `<p><strong>Notes:</strong> ${a.notes}</p>` : ''}
               </div>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <span class="status-badge status-${a.status.toLowerCase()}">${a.status}</span>
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap: wrap;">
+                <span class="status-badge status-${statusKey}">${statusLabel}</span>
                 ${canReschedule ? `<button class="reschedule-btn" data-id="${a.id}" data-date="${a.date}" data-time="${a.time}">Reschedule</button>` : ''}
-                <button class="cancel-btn" data-id="${a.id}" ${canCancel ? '' : 'disabled'}>${canCancel ? 'Cancel' : 'Locked'}</button>
+                ${canCancel ? `<button class="cancel-btn" data-id="${a.id}">Cancel</button>` : ''}
               </div>
             </div>
           `;
@@ -464,7 +483,17 @@
     document.getElementById('rescheduleSubmit').addEventListener('click', submitReschedule);
 
     // Load appointments on page load
-    loadAppointments();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    } else {
+      const payload = decodePayload(token);
+      if (payload?.role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        loadAppointments();
+      }
+    }
   </script>
 </body>
 </html>

@@ -109,43 +109,39 @@
 </head>
 <body>
   <div class="sidebar" id="sidebar">
-    <!-- Sidebar content same as other pages -->
-    <div class="menu-item" onclick="location.href='dashboard.html'">
-      <span class="icon">🏠</span>
-      <span class="text">Dashboard</span>
-    </div>
-
-    <div class="menu-item" onclick="location.href='book-appointment.html'">
-      <span class="icon">📅</span>
-      <span class="text">Book Appointment</span>
-    </div>
-
-    <div class="menu-item" onclick="location.href='my-appointments.html'">
-      <span class="icon">📋</span>
-      <span class="text">My Appointments</span>
-    </div>
-
-    <div class="menu-item" onclick="location.href='settings.html'">
-      <span class="icon">⚙️</span>
-      <span class="text">Settings</span>
-    </div>
-    <div class="submenu">
-      <div class="menu-item" onclick="location.href='faq_section.html'">
-        <span class="icon">❓</span>
-        <span class="text">FAQ</span>
+    <div class="sidebar-nav">
+      <div class="menu-item" onclick="location.href='dashboard.html'">
+        <span class="icon">🏠</span>
+        <span class="text">Dashboard</span>
       </div>
-      <div class="menu-item" onclick="location.href='contact_help.html'">
-        <span class="icon">📞</span>
-        <span class="text">Help Center</span>
+      <div class="menu-item" onclick="location.href='book-appointment.html'">
+        <span class="icon">📅</span>
+        <span class="text">Book Appointment</span>
+      </div>
+      <div class="menu-item" onclick="location.href='my-appointments.html'">
+        <span class="icon">📋</span>
+        <span class="text">My Appointments</span>
+      </div>
+      <div class="menu-item" onclick="location.href='settings.html'">
+        <span class="icon">⚙️</span>
+        <span class="text">Settings</span>
+      </div>
+      <div class="submenu">
+        <div class="menu-item" onclick="location.href='faq_section.html'">
+          <span class="icon">❓</span>
+          <span class="text">FAQ</span>
+        </div>
+        <div class="menu-item active" onclick="location.href='contact_help.html'">
+          <span class="icon">📞</span>
+          <span class="text">Help Center</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="location.href='profile.html'">
+        <span class="icon">👤</span>
+        <span class="text">Profile</span>
       </div>
     </div>
-
-    <div class="menu-item" onclick="location.href='profile.html'">
-      <span class="icon">👤</span>
-      <span class="text">Profile</span>
-    </div>
-
-    <div class="menu-item" id="logout" onclick="location.href='logout.html'">
+    <div class="menu-item" id="logout">
       <span class="icon">🚪</span>
       <span class="text">Logout</span>
     </div>
@@ -236,6 +232,7 @@
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         window.location.href = 'login.html';
       });
     }

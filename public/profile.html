@@ -19,7 +19,7 @@
 
     /* Profile Styles */
     .profile-container {
-      max-width: 600px;
+      max-width: 720px;
       margin: 0 auto;
       background: white;
       border-radius: 8px;
@@ -51,33 +51,51 @@
     .profile-item span {
       color: #6c757d;
     }
-    .profile-stats {
-      margin-top: 30px;
+    .profile-overview {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e9ecef;
       text-align: center;
     }
-    .profile-stats h3 {
-      margin-bottom: 20px;
+    .profile-overview h2 {
+      margin: 0 0 8px 0;
       color: #2c3e50;
+      font-size: 1.35rem;
+    }
+    .profile-overview .overview-sub {
+      margin: 0 0 20px 0;
+      color: #6c757d;
+      font-size: 14px;
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 16px;
     }
     .stat-card {
-      background: #cc51f1;
+      background: linear-gradient(145deg, #b855f0, #9b30ff);
       color: white;
-      padding: 20px;
-      border-radius: 8px;
+      padding: 18px 14px;
+      border-radius: 10px;
       text-align: center;
+      box-shadow: 0 4px 14px rgba(155, 48, 255, 0.25);
+    }
+    .stat-card.stat-cancelled {
+      background: linear-gradient(145deg, #e74c3c, #c0392b);
+      box-shadow: 0 4px 14px rgba(231, 76, 60, 0.25);
     }
     .stat-card h4 {
       margin: 0;
-      font-size: 24px;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
     .stat-card p {
-      margin: 5px 0 0 0;
-      font-size: 14px;
+      margin: 8px 0 0 0;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 600;
+      opacity: 0.95;
     }
 
     /* Responsive */
@@ -92,46 +110,42 @@
 </head>
 <body>
   <div class="sidebar" id="sidebar">
-
-    <div class="menu-item" onclick="location.href='dashboard.html'">
-      <span class="icon">🏠</span>
-      <span class="text">Dashboard</span>
-    </div>
-
-    <div class="menu-item" onclick="location.href='book-appointment.html'">
-      <span class="icon">📅</span>
-      <span class="text">Book Appointment</span>
-    </div>
-    <div class="menu-item" onclick="location.href='my-appointments.html'">
-      <span class="icon">📋</span>
-      <span class="text">My Appointments</span>
-    </div>
-
-    <div class="menu-item" onclick="location.href='settings.html'">
-      <span class="icon">⚙️</span>
-      <span class="text">Settings</span>
-    </div>
-    <div class="submenu">
-      <div class="menu-item" onclick="location.href='faq_section.html'">
-        <span class="icon">❓</span>
-        <span class="text">FAQ</span>
+    <div class="sidebar-nav">
+      <div class="menu-item" onclick="location.href='dashboard.html'">
+        <span class="icon">🏠</span>
+        <span class="text">Dashboard</span>
       </div>
-      <div class="menu-item" onclick="location.href='contact_help.html'">
-        <span class="icon">📞</span>
-        <span class="text">Help Center</span>
+      <div class="menu-item" onclick="location.href='book-appointment.html'">
+        <span class="icon">📅</span>
+        <span class="text">Book Appointment</span>
+      </div>
+      <div class="menu-item" onclick="location.href='my-appointments.html'">
+        <span class="icon">📋</span>
+        <span class="text">My Appointments</span>
+      </div>
+      <div class="menu-item" onclick="location.href='settings.html'">
+        <span class="icon">⚙️</span>
+        <span class="text">Settings</span>
+      </div>
+      <div class="submenu">
+        <div class="menu-item" onclick="location.href='faq_section.html'">
+          <span class="icon">❓</span>
+          <span class="text">FAQ</span>
+        </div>
+        <div class="menu-item" onclick="location.href='contact_help.html'">
+          <span class="icon">📞</span>
+          <span class="text">Help Center</span>
+        </div>
+      </div>
+      <div class="menu-item active" onclick="location.href='profile.html'">
+        <span class="icon">👤</span>
+        <span class="text">Profile</span>
       </div>
     </div>
-
-    <div class="menu-item active" onclick="location.href='profile.html'">
-      <span class="icon">👤</span>
-      <span class="text">Profile</span>
-    </div>
-
-    <div class="menu-item" id="logout" onclick="location.href='logout.html'">
+    <div class="menu-item" id="logout">
       <span class="icon">🚪</span>
       <span class="text">Logout</span>
     </div>
-
   </div>
 
   <div class="main-content">
@@ -140,8 +154,9 @@
       <div class="profile-info" id="profile-info">
         <!-- Profile information will be loaded here -->
       </div>
-      <div class="profile-stats">
-        <h3>Statistics</h3>
+      <section class="profile-overview" aria-labelledby="profile-overview-heading">
+        <h2 id="profile-overview-heading">Profile Overview</h2>
+        <p class="overview-sub">Your appointment statistics at a glance</p>
         <div class="stats-grid">
           <div class="stat-card">
             <h4 id="total-appointments">0</h4>
@@ -149,14 +164,18 @@
           </div>
           <div class="stat-card">
             <h4 id="upcoming-appointments">0</h4>
-            <p>Upcoming</p>
+            <p>Upcoming Appointments</p>
           </div>
           <div class="stat-card">
             <h4 id="completed-appointments">0</h4>
-            <p>Completed</p>
+            <p>Completed Appointments</p>
+          </div>
+          <div class="stat-card stat-cancelled">
+            <h4 id="cancelled-appointments">0</h4>
+            <p>Cancelled Appointments</p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   </div>
 
@@ -168,23 +187,22 @@
     const menuItems = document.querySelectorAll('.menu-item');
 
     menuItems.forEach(item => {
+      if (item.id === 'logout') return;
       item.setAttribute('tabindex', '0');
       item.setAttribute('role', 'button');
 
       item.addEventListener('click', () => {
-        const nav = item.getAttribute('data-nav');
-        if (nav) {
-          window.location.href = `${nav}.html`;
+        const href = item.getAttribute('onclick');
+        if (href && href.includes('location.href=')) {
+          const match = href.match(/location\.href='([^']+)'/);
+          if (match) window.location.href = match[1];
         }
       });
 
       item.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          const nav = item.getAttribute('data-nav');
-          if (nav) {
-            window.location.href = `${nav}.html`;
-          }
+          item.click();
         }
       });
     });
@@ -192,6 +210,7 @@
     // Logout functionality
     document.getElementById('logout').addEventListener('click', () => {
       localStorage.removeItem('token');
+      localStorage.removeItem('role');
       window.location.href = 'login.html';
     });
 
@@ -255,23 +274,51 @@
       }
     }
 
-    // Load appointment statistics
+    function startOfToday() {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
+    function appointmentDay(d) {
+      const x = new Date(d);
+      x.setHours(0, 0, 0, 0);
+      return x;
+    }
+
+    // Load appointment statistics (from live /appointments/my data)
     async function loadAppointmentStats() {
       try {
         const res = await fetch(`${API_BASE}/appointments/my`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
+        if (!res.ok) throw new Error('Failed to load appointments');
         const appointments = await res.json();
 
         const total = appointments.length;
-        const upcoming = appointments.filter(a => new Date(a.date) > new Date()).length;
-        const completed = appointments.filter(a => a.status === 'approved' || a.status === 'completed').length;
+        const today = startOfToday();
+
+        const upcoming = appointments.filter((a) => {
+          const st = (a.status || '').toLowerCase();
+          if (st === 'completed' || st === 'cancelled') return false;
+          const day = appointmentDay(a.date);
+          return day >= today && (st === 'pending' || st === 'approved');
+        }).length;
+
+        const completed = appointments.filter((a) => (a.status || '').toLowerCase() === 'completed').length;
+
+        const cancelled = appointments.filter((a) => (a.status || '').toLowerCase() === 'cancelled').length;
 
         document.getElementById('total-appointments').textContent = total;
         document.getElementById('upcoming-appointments').textContent = upcoming;
         document.getElementById('completed-appointments').textContent = completed;
+        document.getElementById('cancelled-appointments').textContent = cancelled;
       } catch (error) {
         console.error('Error loading appointment stats:', error);
+        ['total-appointments', 'upcoming-appointments', 'completed-appointments', 'cancelled-appointments'].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = '—';
+        });
       }
     }
 

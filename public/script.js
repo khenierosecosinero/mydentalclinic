@@ -1,17 +1,63 @@
 const API_BASE = 'http://localhost:3000';
 
-document.addEventListener('DOMContentLoaded', () => {
+function parseTokenPayload(token) {
+  try {
+    const payload = token.split('.')[1];
+    if (!payload) return null;
+    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decoded);
+  } catch (error) {
+    return null;
+  }
+}
+
+function getRoleFromStorageOrToken() {
+  const storedRole = localStorage.getItem('role');
+  if (storedRole) return storedRole;
   const token = localStorage.getItem('token');
-  if (token) {
-    // Redirect to dashboard after login
-    window.location.href = 'dashboard.html';
+  if (!token) return null;
+  const payload = parseTokenPayload(token);
+  return payload?.role || null;
+}
+
+function getDashboardRouteByRole(role) {
+  return role === 'admin' ? 'admin.html' : 'dashboard.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const currentPage = (window.location.pathname.split('/').pop() || '').toLowerCase();
+  const authPages = new Set(['', 'index.html', 'login.html', 'register.html']);
+  const token = localStorage.getItem('token');
+  if (token && authPages.has(currentPage)) {
+    // Only redirect from auth pages to prevent refresh loops
+    const role = getRoleFromStorageOrToken();
+    const targetRoute = getDashboardRouteByRole(role);
+    if (currentPage !== targetRoute.toLowerCase()) {
+      window.location.href = targetRoute;
+      return;
+    }
   }
 
   // Login form
   const loginForm = document.getElementById('loginForm');
+  const authNotice = document.getElementById('authNotice');
+  const authNoticeText = document.getElementById('authNoticeText');
+  const setAuthNotice = (message, tone = 'error') => {
+    if (!authNotice || !authNoticeText) return;
+    authNoticeText.textContent = message;
+    authNotice.classList.remove('auth-notice--error', 'auth-notice--warning');
+    authNotice.classList.add('show', tone === 'warning' ? 'auth-notice--warning' : 'auth-notice--error');
+  };
+  const clearAuthNotice = () => {
+    if (!authNotice || !authNoticeText) return;
+    authNoticeText.textContent = '';
+    authNotice.classList.remove('show', 'auth-notice--error', 'auth-notice--warning');
+  };
   if (loginForm) {
+    clearAuthNotice();
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      clearAuthNotice();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const res = await fetch(`${API_BASE}/auth/login`, {
@@ -22,10 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('token', data.access_token);
-        // Redirect to dashboard
-        window.location.href = 'dashboard.html';
+        localStorage.setItem('role', data.role || 'patient');
+        // Redirect based on role
+        window.location.href = getDashboardRouteByRole(data.role);
       } else {
-        alert('Login failed');
+        const message = data.message || 'Invalid email or password';
+        const isDeactivated = /deactivat/i.test(message);
+        setAuthNotice(message, isDeactivated ? 'warning' : 'error');
       }
     });
   }

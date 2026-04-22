@@ -121,46 +121,42 @@
 </head>
 <body>
   <div class="sidebar" id="sidebar">
-
-    <div class="menu-item active" onclick="location.href='dashboard.html'">
-      <span class="icon">🏠</span>
-      <span class="text">Dashboard</span>
-    </div>
-
-    <div class="menu-item" onclick="location.href='book-appointment.html'">
-      <span class="icon">📅</span>
-      <span class="text">Book Appointment</span>
-    </div>
-    <div class="menu-item" onclick="location.href='my-appointments.html'">
-      <span class="icon">📋</span>
-      <span class="text">My Appointments</span>
-    </div>
-
-    <div class="menu-item" onclick="location.href='settings.html'">
-      <span class="icon">⚙️</span>
-      <span class="text">Settings</span>
-    </div>
-    <div class="submenu">
-      <div class="menu-item" onclick="location.href='faq_section.html'">
-        <span class="icon">❓</span>
-        <span class="text">FAQ</span>
+    <div class="sidebar-nav">
+      <div class="menu-item active" onclick="location.href='dashboard.html'">
+        <span class="icon">🏠</span>
+        <span class="text">Dashboard</span>
       </div>
-      <div class="menu-item" onclick="location.href='contact_help.html'">
-        <span class="icon">📞</span>
-        <span class="text">Help Center</span>
+      <div class="menu-item" onclick="location.href='book-appointment.html'">
+        <span class="icon">📅</span>
+        <span class="text">Book Appointment</span>
+      </div>
+      <div class="menu-item" onclick="location.href='my-appointments.html'">
+        <span class="icon">📋</span>
+        <span class="text">My Appointments</span>
+      </div>
+      <div class="menu-item" onclick="location.href='settings.html'">
+        <span class="icon">⚙️</span>
+        <span class="text">Settings</span>
+      </div>
+      <div class="submenu">
+        <div class="menu-item" onclick="location.href='faq_section.html'">
+          <span class="icon">❓</span>
+          <span class="text">FAQ</span>
+        </div>
+        <div class="menu-item" onclick="location.href='contact_help.html'">
+          <span class="icon">📞</span>
+          <span class="text">Help Center</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="location.href='profile.html'">
+        <span class="icon">👤</span>
+        <span class="text">Profile</span>
       </div>
     </div>
-
-    <div class="menu-item" onclick="location.href='profile.html'">
-      <span class="icon">👤</span>
-      <span class="text">Profile</span>
-    </div>
-
-    <div class="menu-item" id="logout" onclick="location.href='logout.html'">
+    <div class="menu-item" id="logout">
       <span class="icon">🚪</span>
       <span class="text">Logout</span>
     </div>
-
   </div>
 
   <main class="main-content">
@@ -198,6 +194,11 @@
       </div>
     </div>
 
+    <div class="card">
+      <h3>Recent Notifications</h3>
+      <div id="notification-preview" style="color:#4b5563;">Loading notifications...</div>
+    </div>
+
   </main>
 
   <script src="script.js"></script>
@@ -208,8 +209,17 @@
     document.getElementById('logout').addEventListener('click', (e) => {
       e.preventDefault();
       localStorage.removeItem('token');
+      localStorage.removeItem('role');
       window.location.href = 'login.html';
     });
+
+    function decodePayload(jwt) {
+      try {
+        return JSON.parse(atob(jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      } catch (error) {
+        return null;
+      }
+    }
 
     async function loadUser() {
       try {
@@ -274,16 +284,35 @@
       }
     }
 
+    async function loadNotificationPreview() {
+      try {
+        const res = await fetch('http://localhost:3000/notifications', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        const notifications = await res.json();
+        const preview = notifications.slice(0, 3).map(n => `<div>- ${n.title}: ${n.message}</div>`).join('');
+        document.getElementById('notification-preview').innerHTML = preview || 'No notifications yet.';
+      } catch (err) {
+        document.getElementById('notification-preview').textContent = 'Failed to load notifications.';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem('token');
       if (!token) {
         window.location.href = 'login.html';
         return;
       }
+      const payload = decodePayload(token);
+      if (payload?.role === 'admin') {
+        window.location.href = 'admin.html';
+        return;
+      }
 
       await loadUser();
       loadUpcomingAppointments();
       loadAppointmentStatus();
+      loadNotificationPreview();
     });
   </script>
 </body>

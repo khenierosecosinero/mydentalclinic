@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -12,7 +12,7 @@ export class Appointment {
   @Column()
   time: string; // e.g., '10:00'
 
-  @Column({ default: 'pending' }) // 'pending', 'approved', 'cancelled'
+  @Column({ default: 'pending' }) // 'pending', 'approved', 'cancelled', 'completed'
   status: string;
 
   @ManyToOne(() => User, user => user.appointments)
@@ -39,4 +39,13 @@ export class Appointment {
 
   @Column({ type: 'text', nullable: true })
   notes: string;
+
+  @Column({ type: 'text', nullable: true })
+  remarks?: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -2,83 +2,1114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Sidebar styles are in styles.css */
-
-    /* Main Content */
-    .main-content {
-      margin-left: 250px;
-      padding: 20px;
+    .main-content { margin-left: 250px; padding: 24px; }
+    .section-card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 14px; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .metric {
+      background: #eef2ff;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 72px;
+      justify-content: center;
     }
-
-    @media (max-width: 768px) {
-      .main-content {
-        margin-left: 60px;
+    .metric-label { font-size: 12px; font-weight: 600; color: #4b5563; line-height: 1.25; }
+    .metric-value { font-size: 22px; font-weight: 800; color: #111827; letter-spacing: -0.02em; }
+    .overview-error { font-size: 13px; color: #b91c1c; margin: 6px 0 0; min-height: 1.2em; }
+    .recent-table-wrap {
+      margin-top: 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .recent-appts-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .recent-appts-table th,
+    .recent-appts-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f3f4f6; }
+    .recent-appts-table th { background: #f8fafc; font-weight: 700; color: #374151; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .recent-appts-table tr:last-child td { border-bottom: none; }
+    .recent-appts-table tbody tr:hover { background: #faf5ff; }
+    .recent-empty { padding: 16px; color: #6b7280; font-size: 14px; text-align: center; }
+    @media (max-width: 640px) {
+      .recent-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .recent-appts-table { min-width: 420px; }
+    }
+    .notif-table-wrap {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .notif-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .notif-table th, .notif-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+    .notif-table th { background: #f8fafc; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #374151; }
+    .notif-table tr:last-child td { border-bottom: none; }
+    .notif-table tbody tr:hover { background: #fafafa; }
+    .notif-table tr.notif-unread { background: #f5f3ff; }
+    .notif-title { font-weight: 700; color: #111827; display: block; margin-bottom: 4px; }
+    .notif-msg { font-size: 13px; color: #4b5563; line-height: 1.4; }
+    .notif-meta { font-size: 12px; color: #6b7280; }
+    .notif-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .notif-actions button {
+      background: transparent;
+      border: none;
+      color: #7c3aed;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      font-family: inherit;
+    }
+    .notif-actions button:hover { color: #4c1d95; }
+    @media (max-width: 900px) {
+      .notif-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .notif-table { min-width: 720px; }
+    }
+    .table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .table th, .table td { border-bottom: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+    .table th { background: #f8fafc; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .row input, .row select, .row button { padding: 8px 10px; border-radius: 8px; border: 1px solid #d1d5db; }
+    .row button { cursor: pointer; border: none; background: #7c3aed; color: #fff; }
+    .actions {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      min-height: 44px;
+      text-align: center;
+    }
+    .action-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      max-width: 190px;
+      margin: 0 auto;
+    }
+    .action-select {
+      width: 170px;
+      min-width: 170px;
+      max-width: 170px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: #fff;
+      color: #111827;
+    }
+    .action-select:hover {
+      border-color: #9ca3af;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .action-select:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+    .action-helper {
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.2;
+      text-align: center;
+    }
+    .option-approve { color: #16a34a; }
+    .option-completed { color: #2563eb; }
+    .option-cancel { color: #dc2626; }
+    .option-reschedule { color: #ea580c; }
+    .badge { border-radius: 999px; padding: 4px 8px; color: #fff; font-size: 12px; font-weight: 600; }
+    .pending { background: #b45309; } .approved { background: #059669; } .completed { background: #2563eb; } .cancelled { background: #dc2626; }
+    #trendBars { display: flex; gap: 8px; align-items: flex-end; min-height: 140px; }
+    .bar { width: 34px; background: linear-gradient(180deg,#8b5cf6,#4c1d95); border-radius: 8px 8px 0 0; text-align: center; color: #fff; font-size: 11px; }
+    .bar-label { text-align: center; font-size: 11px; color: #4b5563; margin-top: 4px; }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-overlay.active { display: flex; }
+    .reschedule-modal {
+      width: min(430px, 92vw);
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+    .reschedule-header {
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #7c3aed, #4c1d95);
+      color: #fff;
+      font-weight: 700;
+    }
+    .reschedule-content { padding: 14px 16px; }
+    .reschedule-content label {
+      display: block;
+      font-size: 13px;
+      color: #374151;
+      margin: 8px 0 6px;
+      font-weight: 600;
+    }
+    .reschedule-content input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      outline: none;
+    }
+    .reschedule-content input:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    }
+    .reschedule-error {
+      margin-top: 10px;
+      color: #dc2626;
+      font-size: 13px;
+      min-height: 18px;
+    }
+    .reschedule-actions {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: nowrap;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+      border: none;
+      border-radius: 8px;
+      min-width: 96px;
+      height: 36px;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: #7c3aed;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      min-width: 96px;
+      height: 36px;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    @media (max-width: 900px) {
+      .actions {
+        justify-content: center;
       }
+      .action-wrapper {
+        max-width: 164px;
+      }
+      .action-select {
+        width: 148px;
+        min-width: 148px;
+        max-width: 148px;
+        height: 32px;
+      }
+    }
+    @media (max-width: 768px) { .main-content { margin-left: 60px; } }
+
+    /* User management — action toolbar */
+    .user-actions-cell {
+      vertical-align: middle;
+      min-width: 360px;
+    }
+    .user-actions-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+    .ua-btn {
+      flex: 0 0 auto;
+      min-width: 108px;
+      height: 36px;
+      padding: 0 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      font-family: inherit;
+      color: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ua-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: none;
+    }
+    .ua-btn.ua-deactivate:disabled,
+    .ua-btn.ua-activate:disabled {
+      opacity: 1;
+      filter: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .ua-btn.ua-deactivate:disabled {
+      color: #9a3412;
+      background: linear-gradient(180deg, #ffedd5, #fed7aa);
+      border: 1px solid #fdba74;
+    }
+    .ua-btn.ua-activate:disabled {
+      color: #166534;
+      background: linear-gradient(180deg, #dcfce7, #bbf7d0);
+      border: 1px solid #86efac;
+    }
+    .ua-btn:hover:not(:disabled) { filter: brightness(1.06); }
+    .ua-view { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+    .ua-activate { background: linear-gradient(180deg, #22c55e, #15803d); }
+    .ua-deactivate {
+      background: linear-gradient(180deg, #fb923c, #c2410c);
+      border: 1px solid rgba(154, 52, 18, 0.35);
+    }
+    .ua-delete { background: linear-gradient(180deg, #f87171, #b91c1c); }
+
+    /* Deactivate / Activate confirmation (replaces browser alert) */
+    .user-status-overlay { z-index: 2100; }
+    .user-status-dialog { width: min(440px, 92vw); }
+    .user-status-header {
+      padding: 16px 18px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.08rem;
+      letter-spacing: 0.02em;
+    }
+    .user-status-header--deactivate {
+      background: linear-gradient(135deg, #fb923c, #9a3412);
+    }
+    .user-status-header--activate {
+      background: linear-gradient(135deg, #4ade80, #166534);
+    }
+    .user-status-copy {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #374151;
+    }
+    .user-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .user-status-badge--warn {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+    }
+    .user-status-badge--ok {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .btn-user-status-confirm {
+      border: none;
+      border-radius: 8px;
+      min-width: 128px;
+      height: 36px;
+      padding: 0 16px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      color: #fff;
+      font-family: inherit;
+    }
+    .user-status-confirm--deactivate {
+      background: linear-gradient(180deg, #fb923c, #ea580c);
+      box-shadow: 0 2px 10px rgba(234, 88, 12, 0.35);
+    }
+    .user-status-confirm--activate {
+      background: linear-gradient(180deg, #22c55e, #15803d);
+      box-shadow: 0 2px 10px rgba(22, 163, 74, 0.3);
+    }
+    .btn-user-status-confirm:hover { filter: brightness(1.06); }
+    .delete-user-overlay { z-index: 2150; }
+    .delete-user-header {
+      background: linear-gradient(135deg, #ef4444, #991b1b);
+    }
+    .delete-user-copy {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #374151;
+    }
+    .delete-user-badge {
+      display: inline-flex;
+      margin-top: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #991b1b;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+    .btn-delete-confirm {
+      border: none;
+      border-radius: 8px;
+      min-width: 128px;
+      height: 36px;
+      padding: 0 16px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      color: #fff;
+      font-family: inherit;
+      background: linear-gradient(180deg, #ef4444, #b91c1c);
+      box-shadow: 0 2px 10px rgba(185, 28, 28, 0.35);
+    }
+    .btn-delete-confirm:hover { filter: brightness(1.05); }
+    .user-detail-dl { margin: 0; font-size: 14px; color: #374151; }
+    .user-detail-dl dt { font-weight: 700; margin-top: 10px; color: #111827; }
+    .user-detail-dl dt:first-child { margin-top: 0; }
+    .user-detail-dl dd { margin: 4px 0 0 0; color: #4b5563; }
+    @media (max-width: 1100px) {
+      .user-actions-cell { min-width: 0; }
+      .user-actions-row { flex-wrap: wrap; }
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <div class="menu-item" onclick="location.href='dashboard.html'">
-      <span class="icon">🏠</span>
-      <span class="text">Dashboard</span>
+    <div class="sidebar-nav">
+      <div class="menu-item active" data-nav="dashboard"><span class="icon">🏠</span><span class="text">Dashboard</span></div>
+      <div class="menu-item" data-nav="appointments"><span class="icon">📅</span><span class="text">Appointments</span></div>
+      <div class="menu-item" data-nav="users"><span class="icon">👥</span><span class="text">Users</span></div>
+      <div class="menu-item" data-nav="reports"><span class="icon">📊</span><span class="text">Reports</span></div>
+      <div class="menu-item" data-nav="notifications"><span class="icon">🔔</span><span class="text">Notifications</span></div>
+      <div class="menu-item" data-nav="settings"><span class="icon">⚙️</span><span class="text">Settings</span></div>
     </div>
-    <div class="menu-item" data-nav="book-appointment">
-      <span class="icon">📅</span>
-      <span class="text">Book Appointment</span>
-    </div>
-    <div class="menu-item active" data-nav="admin">
-      <span class="icon">👨‍⚕️</span>
-      <span class="text">Admin Dashboard</span>
-    </div>
-    <div class="menu-item" id="logout">
-      <span class="icon">🚪</span>
-      <span class="text">Logout</span>
-    </div>
+    <div class="menu-item" id="logout"><span class="icon">🚪</span><span class="text">Logout</span></div>
   </div>
 
-  <div class="main-content">
+  <main class="main-content">
     <h1>Admin Dashboard</h1>
-    <h2>All Appointments</h2>
-    <div id="appointments"></div>
+
+    <section class="section-card" id="dashboardSection">
+      <h2>System Overview</h2>
+      <p id="overviewError" class="overview-error" role="status" aria-live="polite"></p>
+      <div class="metrics">
+        <div class="metric">
+          <span class="metric-label">Registered Users</span>
+          <span class="metric-value" id="mTotalUsers">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Active Users</span>
+          <span class="metric-value" id="mActiveUsers">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Total Appointments</span>
+          <span class="metric-value" id="mTotalAppts">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Pending Appointments</span>
+          <span class="metric-value" id="mPending">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Approved Appointments</span>
+          <span class="metric-value" id="mApproved">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Completed Appointments</span>
+          <span class="metric-value" id="mCompleted">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Cancelled Appointments</span>
+          <span class="metric-value" id="mCancelled">0</span>
+        </div>
+      </div>
+      <h3 style="margin-top:18px;">Recent Appointments</h3>
+      <div id="recentBookings" class="recent-table-wrap"></div>
+    </section>
+
+    <section class="section-card" id="appointmentsSection" style="display:none;">
+      <h2>Appointment Management</h2>
+      <div class="row">
+        <input id="apptSearch" placeholder="Search patient name">
+        <select id="apptStatus">
+          <option value="">All status</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select id="apptSort">
+          <option value="createdAt:DESC">Newest</option>
+          <option value="date:ASC">Date ascending</option>
+          <option value="date:DESC">Date descending</option>
+        </select>
+        <button id="applyApptFilters">Apply</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>Patient</th><th>Email</th><th>Contact</th><th>Date/Time</th><th>Service</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="appointmentsBody"></tbody>
+      </table>
+    </section>
+
+    <section class="section-card" id="usersSection" style="display:none;">
+      <h2>User Management</h2>
+      <div class="row">
+        <input id="userSearch" placeholder="Search user by name">
+        <select id="userRoleFilter">
+          <option value="">All roles</option>
+          <option value="admin">Admin</option>
+          <option value="patient">User</option>
+        </select>
+        <button id="applyUserFilters">Apply</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th><th>Appointments</th><th>Actions</th></tr></thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </section>
+
+    <section class="section-card" id="reportsSection" style="display:none;">
+      <h2>Reports & Analytics</h2>
+      <div class="row">
+        <select id="reportRange">
+          <option value="daily">Daily</option>
+          <option value="weekly" selected>Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+        <button id="loadReportBtn">Generate</button>
+      </div>
+      <div id="reportSummary"></div>
+      <h3>Appointment Trends (7 days)</h3>
+      <div id="trendBars"></div>
+      <div id="trendLabels" class="row"></div>
+    </section>
+
+    <section class="section-card" id="notificationsSection" style="display:none;">
+      <h2>Real-time Notifications</h2>
+      <p id="notificationsError" class="overview-error" role="status" aria-live="polite"></p>
+      <div id="adminNotifications"></div>
+    </section>
+
+    <section class="section-card" id="settingsSection" style="display:none;">
+      <h2>Settings</h2>
+      <div class="row">
+        <input type="email" id="adminEmail" placeholder="New admin email">
+        <button id="saveEmailBtn">Change Email</button>
+      </div>
+      <div class="row">
+        <input type="password" id="currentPassword" placeholder="Current password">
+        <input type="password" id="newPassword" placeholder="New password">
+        <button id="changePasswordBtn">Change Password</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="userDetailModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="userDetailModalTitle">
+    <div class="reschedule-modal" style="width: min(480px, 94vw);">
+      <div class="reschedule-header" id="userDetailModalTitle">User details</div>
+      <div class="reschedule-content" id="userDetailBody"></div>
+      <div class="reschedule-actions" style="padding: 0 16px 16px;">
+        <button type="button" id="userDetailCloseBtn" class="btn-secondary">Close</button>
+      </div>
+    </div>
   </div>
 
-  <script src="script.js"></script>
+  <div id="userStatusModal" class="modal-overlay user-status-overlay" role="dialog" aria-modal="true" aria-labelledby="userStatusModalTitle">
+    <div class="reschedule-modal user-status-dialog">
+      <div id="userStatusModalTitle" class="user-status-header user-status-header--deactivate">Deactivate account</div>
+      <div class="reschedule-content">
+        <p id="userStatusModalText" class="user-status-copy"></p>
+        <div id="userStatusBadge" class="user-status-badge user-status-badge--warn" aria-hidden="true"></div>
+        <div id="userStatusError" class="reschedule-error" role="alert"></div>
+        <div class="reschedule-actions" style="margin-top: 16px; padding: 0;">
+          <button type="button" id="userStatusCancelBtn" class="btn-secondary">Cancel</button>
+          <button type="button" id="userStatusConfirmBtn" class="btn-user-status-confirm user-status-confirm--deactivate">Deactivate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="deleteUserModal" class="modal-overlay delete-user-overlay" role="dialog" aria-modal="true" aria-labelledby="deleteUserModalTitle">
+    <div class="reschedule-modal user-status-dialog">
+      <div id="deleteUserModalTitle" class="user-status-header delete-user-header">Delete user account</div>
+      <div class="reschedule-content">
+        <p id="deleteUserModalText" class="delete-user-copy">This action permanently removes the user account and blocks all future access.</p>
+        <div class="delete-user-badge">Permanent action - cannot be undone</div>
+        <div id="deleteUserError" class="reschedule-error" role="alert"></div>
+        <div class="reschedule-actions" style="margin-top: 16px; padding: 0;">
+          <button type="button" id="deleteUserCancelBtn" class="btn-secondary">Cancel</button>
+          <button type="button" id="deleteUserConfirmBtn" class="btn-delete-confirm">Delete user</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="rescheduleModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rescheduleModalTitle">
+    <div class="reschedule-modal">
+      <div class="reschedule-header" id="rescheduleModalTitle">Reschedule Appointment</div>
+      <div class="reschedule-content">
+        <label for="rescheduleDateInput">New Date</label>
+        <input id="rescheduleDateInput" type="date">
+        <label for="rescheduleTimeInput">New Time</label>
+        <input id="rescheduleTimeInput" type="time">
+        <div id="rescheduleError" class="reschedule-error"></div>
+        <div class="reschedule-actions">
+          <button type="button" id="rescheduleCancelBtn" class="btn-secondary">Cancel</button>
+          <button type="button" id="rescheduleSaveBtn" class="btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Sidebar navigation
-    const sidebarItems = document.querySelectorAll('.sidebar .menu-item');
-    sidebarItems.forEach(item => {
-      item.setAttribute('tabindex', '0');
-      item.setAttribute('role', 'button');
+    const API_BASE = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    let activeRescheduleId = null;
+    let pendingUserStatus = null;
+    let pendingDeleteUserId = null;
 
-      const nav = item.getAttribute('data-nav');
-      item.addEventListener('click', () => {
-        if (nav === 'book-appointment') {
-          window.location.href = 'book-appointment.html';
-        } else if (nav === 'admin') {
-          // Stay on admin page
-        }
-      });
-
-      item.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          item.click();
-        }
-      });
-    });
-
-    // Logout
-    const logoutBtn = document.getElementById('logout');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
+    function decodePayload(jwt) {
+      try { return JSON.parse(atob(jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); } catch { return null; }
+    }
+    async function authFetch(url, options = {}) {
+      const headers = { Authorization: `Bearer ${token}`, ...(options.headers || {}) };
+      if (!headers['Content-Type'] && options.body) headers['Content-Type'] = 'application/json';
+      const response = await fetch(url, { ...options, headers });
+      if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         window.location.href = 'login.html';
+        throw new Error('Unauthorized');
+      }
+      return response;
+    }
+    function safeText(value) { return String(value || '').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function n(v) { const x = Number(v); return Number.isFinite(x) ? x : 0; }
+    function formatTime(t) {
+      const s = String(t || '').trim();
+      if (!s) return '—';
+      return s.length >= 5 ? s.slice(0, 5) : s;
+    }
+
+    async function loadDashboard() {
+      const errEl = document.getElementById('overviewError');
+      const recentEl = document.getElementById('recentBookings');
+      try {
+        const res = await authFetch(`${API_BASE}/appointments/admin/summary`);
+        if (!res.ok) {
+          const details = await res.text();
+          throw new Error(details || 'Failed to load overview');
+        }
+        const s = await res.json();
+        if (errEl) errEl.textContent = '';
+        document.getElementById('mTotalUsers').textContent = String(n(s.totalUsers));
+        document.getElementById('mActiveUsers').textContent = String(n(s.activeUsers));
+        document.getElementById('mTotalAppts').textContent = String(n(s.totalAppointments));
+        document.getElementById('mPending').textContent = String(n(s.pendingCount));
+        document.getElementById('mApproved').textContent = String(n(s.approvedCount));
+        document.getElementById('mCompleted').textContent = String(n(s.completedCount));
+        document.getElementById('mCancelled').textContent = String(n(s.cancelledCount));
+
+        const rows = (s.recentBookings || []).slice(0, 10);
+        if (!rows.length) {
+          recentEl.innerHTML = '<div class="recent-empty">No appointments yet. Bookings will appear here as they are created.</div>';
+        } else {
+          const body = rows.map((a) => {
+            const st = (a.status || '').toLowerCase();
+            const dateStr = a.date ? new Date(a.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+            return `<tr>
+              <td>${safeText(a.fullName)}</td>
+              <td>${safeText(dateStr)}</td>
+              <td>${safeText(formatTime(a.time))}</td>
+              <td><span class="badge ${st}">${safeText(a.status || '—')}</span></td>
+            </tr>`;
+          }).join('');
+          recentEl.innerHTML = `<table class="recent-appts-table" aria-label="Recent appointments"><thead><tr><th>Patient name</th><th>Date</th><th>Time</th><th>Status</th></tr></thead><tbody>${body}</tbody></table>`;
+        }
+        renderTrend(s.appointmentTrends || []);
+      } catch (e) {
+        console.error(e);
+        if (errEl) errEl.textContent = 'Could not load overview data. Check your connection and try refreshing the page.';
+        recentEl.innerHTML = '<div class="recent-empty">Recent appointments are unavailable until the overview loads.</div>';
+      }
+    }
+
+    function renderTrend(trend) {
+      const host = document.getElementById('trendBars');
+      if (!host) return;
+      const max = Math.max(1, ...trend.map(t => t.count));
+      host.innerHTML = trend.map(t => {
+        const height = Math.round((t.count / max) * 120);
+        return `<div><div class="bar" style="height:${height}px">${t.count}</div><div class="bar-label">${t.date.slice(5)}</div></div>`;
+      }).join('');
+    }
+
+    async function loadAppointments() {
+      const status = document.getElementById('apptStatus').value;
+      const search = document.getElementById('apptSearch').value.trim();
+      const [sortBy, sortOrder] = document.getElementById('apptSort').value.split(':');
+      const params = new URLSearchParams();
+      if (status) params.set('status', status);
+      if (search) params.set('search', search);
+      params.set('sortBy', sortBy);
+      params.set('sortOrder', sortOrder);
+      const res = await authFetch(`${API_BASE}/appointments?${params.toString()}`);
+      if (!res.ok) {
+        throw new Error('Failed to load appointments');
+      }
+      const list = await res.json();
+      document.getElementById('appointmentsBody').innerHTML = list.map(a => `
+        <tr>
+          <td>${safeText(a.fullName)}</td>
+          <td>${safeText(a.email)}</td>
+          <td>${safeText(a.phone)}</td>
+          <td>${new Date(a.date).toLocaleDateString()} ${safeText(a.time)}</td>
+          <td>${safeText(a.service)}</td>
+          <td><span class="badge ${(a.status || '').toLowerCase()}">${safeText(a.status)}</span></td>
+          <td class="actions">
+            <div class="action-wrapper">
+              <select
+                class="action-select"
+                title="Select appointment action"
+                aria-label="Select appointment action"
+                onchange="handleAppointmentAction(${a.id}, this)"
+              >
+                <option value="">Select Action</option>
+                <option value="approved" class="option-approve">Approve</option>
+                <option value="completed" class="option-completed">Completed</option>
+                <option value="cancelled" class="option-cancel">Cancel</option>
+                <option value="reschedule" class="option-reschedule">Reschedule</option>
+              </select>
+              <span class="action-helper" title="Choose an action and it will be applied immediately.">Choose action</span>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadUsers() {
+      const params = new URLSearchParams();
+      const search = document.getElementById('userSearch').value.trim();
+      const role = document.getElementById('userRoleFilter').value;
+      if (search) params.set('search', search);
+      if (role) params.set('role', role);
+      const res = await authFetch(`${API_BASE}/users?${params.toString()}`);
+      if (!res.ok) {
+        throw new Error('Failed to load users');
+      }
+      const users = await res.json();
+      document.getElementById('usersBody').innerHTML = users.map((u) => {
+        const isAdmin = u.role === 'admin';
+        const viewBtn = `<button type="button" class="ua-btn ua-view" onclick="viewUser(${u.id})">View</button>`;
+        const activateBtn = !isAdmin
+          ? `<button type="button" class="ua-btn ua-activate" onclick="toggleUser(${u.id}, true)" ${u.isActive ? 'disabled' : ''}>Activate</button>`
+          : '';
+        const deactivateBtn = !isAdmin
+          ? `<button type="button" class="ua-btn ua-deactivate" onclick="toggleUser(${u.id}, false)" ${u.isActive ? '' : 'disabled'}>Deactivate</button>`
+          : '';
+        const deleteBtn = !isAdmin
+          ? `<button type="button" class="ua-btn ua-delete" onclick="deleteUser(${u.id})">Delete</button>`
+          : '';
+        return `
+        <tr>
+          <td>${safeText(u.name)}</td>
+          <td>${safeText(u.email)}</td>
+          <td>${safeText(u.role)}</td>
+          <td>${u.isActive ? 'Yes' : 'No'}</td>
+          <td>${u.appointments ? u.appointments.length : 0}</td>
+          <td class="user-actions-cell">
+            <div class="user-actions-row">${viewBtn}${activateBtn}${deactivateBtn}${deleteBtn}</div>
+          </td>
+        </tr>
+      `;
+      }).join('');
+    }
+
+    async function loadNotifications() {
+      const host = document.getElementById('adminNotifications');
+      const errEl = document.getElementById('notificationsError');
+      try {
+        if (errEl) errEl.textContent = '';
+        const res = await authFetch(`${API_BASE}/notifications`);
+        if (!res.ok) throw new Error('Failed to load notifications');
+        const notifications = await res.json();
+        if (!notifications.length) {
+          host.innerHTML = '<div class="recent-empty">No notifications yet. When a patient books an appointment, it will show up here.</div>';
+          return;
+        }
+        const rows = notifications.map((n) => {
+          const st = String(n.appointmentStatus || '').toLowerCase();
+          const patient = safeText(n.patientName || '—');
+          const apptDate = n.appointmentDate
+            ? new Date(n.appointmentDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+            : '—';
+          const apptTime = n.appointmentTime ? safeText(formatTime(n.appointmentTime)) : '—';
+          const statusCell = n.appointmentStatus
+            ? `<span class="badge ${st}">${safeText(n.appointmentStatus)}</span>`
+            : '<span class="notif-meta">—</span>';
+          const received = n.createdAt ? new Date(n.createdAt).toLocaleString() : '—';
+          const readLabel = n.isRead ? 'Read' : 'Unread';
+          const rowClass = n.isRead ? '' : ' notif-unread';
+          const toggleBtn = n.isRead
+            ? `<button type="button" onclick="markUnread(${n.id})">Mark unread</button>`
+            : `<button type="button" onclick="markRead(${n.id})">Mark read</button>`;
+          return `<tr class="${rowClass.trim()}">
+            <td><strong>${patient}</strong></td>
+            <td>${safeText(apptDate)}</td>
+            <td>${apptTime}</td>
+            <td>${statusCell}</td>
+            <td>
+              <span class="notif-title">${safeText(n.title)}</span>
+              <span class="notif-msg">${safeText(n.message)}</span>
+            </td>
+            <td><span class="notif-meta">${safeText(received)}</span><br><span class="notif-meta">${readLabel}</span></td>
+            <td class="notif-actions">${toggleBtn}</td>
+          </tr>`;
+        }).join('');
+        host.innerHTML = `<div class="notif-table-wrap"><table class="notif-table" aria-label="Notifications"><thead><tr>
+          <th>Patient</th><th>Date</th><th>Time</th><th>Status</th><th>Details</th><th>Received</th><th>Actions</th>
+        </tr></thead><tbody>${rows}</tbody></table></div>`;
+      } catch (e) {
+        console.error(e);
+        if (errEl) errEl.textContent = 'Could not load notifications. Refresh the page or try again in a moment.';
+        host.innerHTML = '<div class="recent-empty">Notifications are temporarily unavailable.</div>';
+      }
+    }
+
+    async function loadReport() {
+      const range = document.getElementById('reportRange').value;
+      const res = await authFetch(`${API_BASE}/appointments/admin/report?range=${range}`);
+      if (!res.ok) {
+        throw new Error('Failed to load report');
+      }
+      const report = await res.json();
+      document.getElementById('reportSummary').innerHTML = `
+        <div>Total (${report.range}): <strong>${report.total}</strong></div>
+        <div>Pending: ${report.byStatus.pending || 0} | Approved: ${report.byStatus.approved || 0} | Completed: ${report.byStatus.completed || 0} | Cancelled: ${report.byStatus.cancelled || 0}</div>
+      `;
+    }
+
+    async function setStatus(id, status) {
+      await authFetch(`${API_BASE}/appointments/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
+      await Promise.all([loadAppointments(), loadDashboard(), loadNotifications()]);
+    }
+    function openRescheduleModal(id) {
+      activeRescheduleId = id;
+      document.getElementById('rescheduleDateInput').value = '';
+      document.getElementById('rescheduleTimeInput').value = '';
+      document.getElementById('rescheduleError').textContent = '';
+      document.getElementById('rescheduleModal').classList.add('active');
+    }
+    function closeRescheduleModal() {
+      activeRescheduleId = null;
+      document.getElementById('rescheduleModal').classList.remove('active');
+    }
+    async function submitReschedule() {
+      if (!activeRescheduleId) return;
+      const date = document.getElementById('rescheduleDateInput').value;
+      const time = document.getElementById('rescheduleTimeInput').value;
+      const errorEl = document.getElementById('rescheduleError');
+      errorEl.textContent = '';
+      if (!date || !time) {
+        errorEl.textContent = 'Please select both date and time.';
+        return;
+      }
+      const selected = new Date(`${date}T${time}`);
+      if (selected < new Date()) {
+        errorEl.textContent = 'Please choose a future date and time.';
+        return;
+      }
+      await authFetch(`${API_BASE}/appointments/${activeRescheduleId}`, { method: 'PUT', body: JSON.stringify({ date, time }) });
+      closeRescheduleModal();
+      await Promise.all([loadAppointments(), loadDashboard(), loadNotifications()]);
+    }
+    function reschedule(id) {
+      openRescheduleModal(id);
+    }
+    async function handleAppointmentAction(id, selectEl) {
+      const action = selectEl.value;
+      if (!action) return;
+      if (action === 'reschedule') {
+        reschedule(id);
+        selectEl.value = '';
+        return;
+      }
+      await setStatus(id, action);
+      selectEl.value = '';
+    }
+    function closeUserDetailModal() {
+      const m = document.getElementById('userDetailModal');
+      if (m) m.classList.remove('active');
+    }
+
+    async function viewUser(id) {
+      const body = document.getElementById('userDetailBody');
+      const modal = document.getElementById('userDetailModal');
+      if (!body || !modal) return;
+      body.innerHTML = '<p style="margin:0;color:#6b7280;">Loading…</p>';
+      modal.classList.add('active');
+      try {
+        const res = await authFetch(`${API_BASE}/users/${id}`);
+        if (!res.ok) throw new Error('Failed to load user');
+        const u = await res.json();
+        const line = (label, val) => `<dt>${safeText(label)}</dt><dd>${safeText(val)}</dd>`;
+        body.innerHTML = `<dl class="user-detail-dl">
+          ${line('Full name', u.name || '—')}
+          ${line('Email', u.email || '—')}
+          ${line('Phone', u.contactNumber || '—')}
+          ${line('Role', u.role || '—')}
+          ${line('Active', u.isActive === false ? 'No (deactivated)' : 'Yes')}
+          ${line('Address', u.address || '—')}
+          ${line('Date of birth', u.dateOfBirth || '—')}
+          ${line('Appointments on file', String(u.appointments?.length ?? 0))}
+        </dl>`;
+      } catch (e) {
+        console.error(e);
+        body.innerHTML = '<p style="margin:0;color:#b91c1c;">Could not load user details.</p>';
+      }
+    }
+
+    function closeUserStatusModal() {
+      const overlay = document.getElementById('userStatusModal');
+      if (overlay) overlay.classList.remove('active');
+      pendingUserStatus = null;
+      const err = document.getElementById('userStatusError');
+      if (err) err.textContent = '';
+      const confirmBtn = document.getElementById('userStatusConfirmBtn');
+      if (confirmBtn) confirmBtn.disabled = false;
+    }
+
+    function openUserStatusModal(id, isActive) {
+      pendingUserStatus = { id, isActive };
+      const overlay = document.getElementById('userStatusModal');
+      const titleEl = document.getElementById('userStatusModalTitle');
+      const copyEl = document.getElementById('userStatusModalText');
+      const confirmBtn = document.getElementById('userStatusConfirmBtn');
+      const badgeEl = document.getElementById('userStatusBadge');
+      const errEl = document.getElementById('userStatusError');
+      if (!overlay || !titleEl || !copyEl || !confirmBtn || !badgeEl) return;
+      if (errEl) errEl.textContent = '';
+
+      titleEl.classList.remove('user-status-header--activate', 'user-status-header--deactivate');
+      confirmBtn.classList.remove('user-status-confirm--activate', 'user-status-confirm--deactivate');
+      badgeEl.classList.remove('user-status-badge--ok', 'user-status-badge--warn');
+
+      if (isActive) {
+        titleEl.classList.add('user-status-header--activate');
+        titleEl.textContent = 'Activate account';
+        copyEl.textContent = 'This will restore full access. The user can sign in again and use the patient area as usual.';
+        badgeEl.classList.add('user-status-badge--ok');
+        badgeEl.textContent = '✓ Access restored after you confirm';
+        confirmBtn.classList.add('user-status-confirm--activate');
+        confirmBtn.textContent = 'Activate';
+      } else {
+        titleEl.classList.add('user-status-header--deactivate');
+        titleEl.textContent = 'Deactivate account';
+        copyEl.textContent = 'This temporarily blocks the account. The user cannot sign in or use the app until you activate them again from User Management.';
+        badgeEl.classList.add('user-status-badge--warn');
+        badgeEl.textContent = '⚠ Sign-in blocked until reactivated';
+        confirmBtn.classList.add('user-status-confirm--deactivate');
+        confirmBtn.textContent = 'Deactivate';
+      }
+
+      overlay.classList.add('active');
+      confirmBtn.focus();
+    }
+
+    async function submitUserStatusChange() {
+      if (!pendingUserStatus) return;
+      const { id, isActive } = pendingUserStatus;
+      const errEl = document.getElementById('userStatusError');
+      const confirmBtn = document.getElementById('userStatusConfirmBtn');
+      if (errEl) errEl.textContent = '';
+      if (confirmBtn) confirmBtn.disabled = true;
+      try {
+        const res = await authFetch(`${API_BASE}/users/${id}/active`, { method: 'PUT', body: JSON.stringify({ isActive }) });
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(t || 'Request failed');
+        }
+        closeUserStatusModal();
+        await loadUsers();
+      } catch (e) {
+        console.error(e);
+        if (errEl) errEl.textContent = 'Could not update this account. Try again.';
+      } finally {
+        if (confirmBtn) confirmBtn.disabled = false;
+      }
+    }
+
+    function toggleUser(id, isActive) {
+      openUserStatusModal(id, isActive);
+    }
+    function closeDeleteUserModal() {
+      const overlay = document.getElementById('deleteUserModal');
+      if (overlay) overlay.classList.remove('active');
+      pendingDeleteUserId = null;
+      const err = document.getElementById('deleteUserError');
+      if (err) err.textContent = '';
+      const confirmBtn = document.getElementById('deleteUserConfirmBtn');
+      if (confirmBtn) confirmBtn.disabled = false;
+    }
+    function openDeleteUserModal(id) {
+      pendingDeleteUserId = id;
+      const overlay = document.getElementById('deleteUserModal');
+      const err = document.getElementById('deleteUserError');
+      if (err) err.textContent = '';
+      if (overlay) overlay.classList.add('active');
+    }
+    async function submitDeleteUser() {
+      if (!pendingDeleteUserId) return;
+      const confirmBtn = document.getElementById('deleteUserConfirmBtn');
+      const err = document.getElementById('deleteUserError');
+      if (confirmBtn) confirmBtn.disabled = true;
+      if (err) err.textContent = '';
+      try {
+        const res = await authFetch(`${API_BASE}/users/${pendingDeleteUserId}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(t || 'Delete failed');
+        }
+        closeDeleteUserModal();
+        await loadUsers();
+      } catch (e) {
+        console.error(e);
+        if (err) err.textContent = 'Could not delete this user. Please try again.';
+      } finally {
+        if (confirmBtn) confirmBtn.disabled = false;
+      }
+    }
+    function deleteUser(id) {
+      openDeleteUserModal(id);
+    }
+    async function markRead(id) { await authFetch(`${API_BASE}/notifications/${id}/read`, { method: 'PUT' }); await loadNotifications(); }
+    async function markUnread(id) { await authFetch(`${API_BASE}/notifications/${id}/unread`, { method: 'PUT' }); await loadNotifications(); }
+    window.setStatus = setStatus;
+    window.reschedule = reschedule;
+    window.handleAppointmentAction = handleAppointmentAction;
+    window.toggleUser = toggleUser;
+    window.deleteUser = deleteUser;
+    window.viewUser = viewUser;
+    window.markRead = markRead;
+    window.markUnread = markUnread;
+    function setupSidebar() {
+      const sections = {
+        dashboard: document.getElementById('dashboardSection'),
+        appointments: document.getElementById('appointmentsSection'),
+        users: document.getElementById('usersSection'),
+        reports: document.getElementById('reportsSection'),
+        notifications: document.getElementById('notificationsSection'),
+        settings: document.getElementById('settingsSection'),
+      };
+      document.querySelectorAll('.sidebar .menu-item[data-nav]').forEach((item) => {
+        item.addEventListener('click', () => {
+          const nav = item.getAttribute('data-nav');
+          document.querySelectorAll('.sidebar .menu-item[data-nav]').forEach((x) => x.classList.remove('active'));
+          item.classList.add('active');
+          Object.values(sections).forEach((s) => { s.style.display = 'none'; });
+          sections[nav].style.display = 'block';
+          if (nav === 'notifications') {
+            loadNotifications().catch(() => {});
+          }
+        });
       });
     }
+
+    document.getElementById('applyApptFilters').addEventListener('click', loadAppointments);
+    document.getElementById('applyUserFilters').addEventListener('click', loadUsers);
+    document.getElementById('loadReportBtn').addEventListener('click', loadReport);
+    document.getElementById('saveEmailBtn').addEventListener('click', async () => {
+      const payload = decodePayload(token);
+      const email = document.getElementById('adminEmail').value.trim();
+      if (!email) return;
+      await authFetch(`${API_BASE}/users/${payload.sub}`, { method: 'PUT', body: JSON.stringify({ email }) });
+      alert('Admin email updated');
+    });
+    document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      await authFetch(`${API_BASE}/users/me/password`, { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) });
+      alert('Password updated');
+    });
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      window.location.href = 'login.html';
+    });
+    document.getElementById('rescheduleCancelBtn').addEventListener('click', closeRescheduleModal);
+    document.getElementById('rescheduleSaveBtn').addEventListener('click', submitReschedule);
+    document.getElementById('rescheduleModal').addEventListener('click', (event) => {
+      if (event.target.id === 'rescheduleModal') {
+        closeRescheduleModal();
+      }
+    });
+    document.getElementById('userDetailCloseBtn').addEventListener('click', closeUserDetailModal);
+    document.getElementById('userDetailModal').addEventListener('click', (event) => {
+      if (event.target.id === 'userDetailModal') closeUserDetailModal();
+    });
+    document.getElementById('userStatusCancelBtn').addEventListener('click', closeUserStatusModal);
+    document.getElementById('userStatusConfirmBtn').addEventListener('click', submitUserStatusChange);
+    document.getElementById('userStatusModal').addEventListener('click', (event) => {
+      if (event.target.id === 'userStatusModal') closeUserStatusModal();
+    });
+    document.getElementById('deleteUserCancelBtn').addEventListener('click', closeDeleteUserModal);
+    document.getElementById('deleteUserConfirmBtn').addEventListener('click', submitDeleteUser);
+    document.getElementById('deleteUserModal').addEventListener('click', (event) => {
+      if (event.target.id === 'deleteUserModal') closeDeleteUserModal();
+    });
+
+    (async () => {
+      if (!token) { window.location.href = 'login.html'; return; }
+      const payload = decodePayload(token);
+      if (!payload || payload.role !== 'admin') { window.location.href = 'dashboard.html'; return; }
+      setupSidebar();
+      await Promise.allSettled([loadDashboard(), loadAppointments(), loadUsers(), loadNotifications(), loadReport()]);
+      setInterval(async () => {
+        try {
+          await Promise.all([loadDashboard(), loadNotifications()]);
+        } catch (error) {
+          /* silent retry on next interval */
+        }
+      }, 15000);
+    })();
   </script>
 </body>
 </html>

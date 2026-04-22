@@ -218,3 +218,159 @@ Provides assistance and answers to common questions.
 Logout Confirmation
 
 Redirects the user to the login page after logging out.
+
+8. Admin Module Specification (Shared Login Updated)
+
+8.1 System Description
+
+The Admin Module allows the administrator to manage appointments and users within the system.
+
+The system uses a shared login page for both regular users and admin accounts.
+
+After successful authentication, the system redirects users based on role:
+
+Admin users are redirected to the Admin Dashboard.
+
+Regular users are redirected to the User Dashboard.
+
+8.2 Admin Login Access (Shared Login Page)
+
+The system shall use a single login page for both users and admin.
+
+Default admin credentials:
+
+Email: admin@gmail.com
+
+Password: admin123
+
+8.3 Authentication Behavior
+
+The system shall allow login using:
+
+Email
+
+Password
+
+The system shall validate credentials and redirect based on account type:
+
+If credentials are admin@gmail.com and admin123, redirect to Admin Dashboard.
+
+If credentials belong to a regular user account, redirect to User Dashboard.
+
+If credentials are invalid, display an authentication error message.
+
+8.4 Role-Based Access
+
+The system shall identify user roles and enforce access control:
+
+Admin: Full system control.
+
+User: Limited to personal features.
+
+8.5 Admin Functional Requirements
+
+8.5.1 Admin Dashboard
+
+The system shall display the following in the Admin Dashboard:
+
+Total appointments
+
+Pending, Approved, and Cancelled appointment counts
+
+Recent bookings
+
+8.5.2 Sidebar Navigation (Admin)
+
+The admin interface sidebar shall include:
+
+Dashboard
+
+Appointments
+
+Users
+
+Reports (optional)
+
+Settings
+
+Logout
+
+The sidebar must be visible on all admin pages.
+
+The active menu item must be highlighted.
+
+8.5.3 Appointment Management
+
+The system shall allow admin to view all appointments submitted by users.
+
+The system shall display appointment details, including:
+
+Name
+
+Email
+
+Phone
+
+Date and time
+
+Service
+
+Status
+
+The system shall allow admin actions:
+
+Approve appointment
+
+Cancel appointment
+
+Update appointment status
+
+Any status change made by admin must be reflected on the user side.
+
+8.5.4 User Management
+
+The system shall allow admin to view all users.
+
+The system shall allow admin to view user appointment history.
+
+8.5.5 Settings
+
+The system shall allow admin to change admin email.
+
+The system shall allow admin to change password.
+
+8.5.6 Logout
+
+The system shall support secure admin logout.
+
+After logout, the system shall redirect to the shared login page.
+
+8.6 System Flow (Shared Login)
+
+User/Admin opens Login Page and enters credentials.
+
+If role is Admin, redirect to Admin Dashboard.
+
+If role is User, redirect to User Dashboard.
+
+If login is invalid, display an error message.
+
+8.7 Non-Functional Requirements (Admin Module)
+
+Secure login session handling.
+
+Fast authentication response (less than 3 seconds).
+
+Strict role-based access control.
+
+Data privacy enforcement.
+
+8.8 Expected Output (Admin Module)
+
+Admin is redirected to Admin Dashboard after successful login.
+
+Users are redirected to User Dashboard after successful login.
+
+Role-based sidebar is displayed in admin pages.
+
+Appointment status updates are reflected in real time for both admin and users.

@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Appointment } from './appointment.entity';
+import { Notification } from './notification.entity';
 
 @Entity()
 export class User {
@@ -42,6 +43,12 @@ export class User {
   @Column({ default: 'patient' }) // 'admin' or 'patient'
   role: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @OneToMany(() => Appointment, appointment => appointment.patient)
   appointments: Appointment[];
+
+  @OneToMany(() => Notification, notification => notification.user)
+  notifications: Notification[];
 }

@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../entities/user.entity';
 
@@ -11,16 +11,48 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async findAll(query?: { search?: string; role?: string; isActive?: string }): Promise<User[]> {
+    const where: any = {};
+    if (query?.search) {
+      where.name = Like(`%${query.search}%`);
+    }
+    if (query?.role) {
+      where.role = query.role;
+    }
+    if (query?.isActive === 'true' || query?.isActive === 'false') {
+      where.isActive = query.isActive === 'true';
+    }
+    return this.userRepository.find({ where: Object.keys(where).length ? where : undefined, relations: ['appointments'] });
   }
 
   async findOne(id: number): Promise<User | null> {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOne({ where: { id }, relations: ['appointments'] });
   }
 
   async update(id: number, updateData: Partial<User>): Promise<User | null> {
     await this.userRepository.update(id, updateData);
+    return this.findOne(id);
+  }
+
+  async createByAdmin(data: { name: string; email: string; password: string; contactNumber: string; role?: string }): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const user = this.userRepository.create({
+      name: data.name,
+      email: data.email.trim().toLowerCase(),
+      password: hashedPassword,
+      contactNumber: data.contactNumber,
+      role: data.role || 'patient',
+      isActive: true,
+    });
+    return this.userRepository.save(user);
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.userRepository.delete(id);
+  }
+
+  async setActive(id: number, isActive: boolean): Promise<User | null> {
+    await this.userRepository.update(id, { isActive });
     return this.findOne(id);
   }
 

@@ -104,6 +104,50 @@
     .secondary:hover {
       color: #1d4ed8;
     }
+    .auth-notice {
+      display: none;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      border: 1px solid transparent;
+    }
+    .auth-notice.show {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .auth-notice-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+    .auth-notice--error {
+      background: #fff1f2;
+      color: #9f1239;
+      border-color: #fecdd3;
+    }
+    .auth-notice--error .auth-notice-icon {
+      background: #e11d48;
+      color: #fff;
+    }
+    .auth-notice--warning {
+      background: #fff7ed;
+      color: #9a3412;
+      border-color: #fed7aa;
+    }
+    .auth-notice--warning .auth-notice-icon {
+      background: #ea580c;
+      color: #fff;
+    }
 
     .welcome-panel {
       background: linear-gradient(135deg, #c870ff 0%, #b01fff 100%);
@@ -175,6 +219,10 @@
       <div>
         <h2>Login</h2>
         <p>Welcome back! Login to manage your appointments.</p>
+      </div>
+      <div id="authNotice" class="auth-notice" role="alert" aria-live="assertive">
+        <span class="auth-notice-icon" aria-hidden="true">!</span>
+        <span id="authNoticeText"></span>
       </div>
 
       <form id="loginForm">
