@@ -405,6 +405,20 @@
     .user-detail-dl { margin: 0; font-size: 14px; color: #374151; }
     .user-detail-dl dt { font-weight: 700; margin-top: 10px; color: #111827; }
     .user-detail-dl dt:first-child { margin-top: 0; }
+    .user-detail-dl dt[style*="text-transform"] { 
+      font-weight: 600; 
+      font-size: 11px; 
+      margin-top: 14px; 
+      color: #6b7280; 
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .user-detail-dl dt[style*="text-transform"]:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+    }
     .user-detail-dl dd { margin: 4px 0 0 0; color: #4b5563; }
     @media (max-width: 1100px) {
       .user-actions-cell { min-width: 0; }
@@ -426,7 +440,7 @@
   </div>
 
   <main class="main-content">
-    <h1>Admin Dashboard</h1>
+    <h1>Admin</h1>
 
     <section class="section-card" id="dashboardSection">
       <h2>System Overview</h2>
@@ -890,16 +904,57 @@
         const res = await authFetch(`${API_BASE}/users/${id}`);
         if (!res.ok) throw new Error('Failed to load user');
         const u = await res.json();
+        
+        // Helper to format date
+        const formatDate = (dateStr) => {
+          if (!dateStr) return '—';
+          try {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+          } catch {
+            return safeText(dateStr);
+          }
+        };
+        
         const line = (label, val) => `<dt>${safeText(label)}</dt><dd>${safeText(val)}</dd>`;
-        body.innerHTML = `<dl class="user-detail-dl">
+        const dateField = (label, val) => `<dt>${safeText(label)}</dt><dd>${formatDate(val)}</dd>`;
+        
+        // Basic Information Section
+        const basicInfo = `
           ${line('Full name', u.name || '—')}
           ${line('Email', u.email || '—')}
           ${line('Phone', u.contactNumber || '—')}
-          ${line('Role', u.role || '—')}
-          ${line('Active', u.isActive === false ? 'No (deactivated)' : 'Yes')}
+          ${line('Role', (u.role || 'patient').charAt(0).toUpperCase() + (u.role || 'patient').slice(1))}
+          ${line('Status', u.isActive === false ? '🔴 Deactivated' : '🟢 Active')}
+        `;
+        
+        // Personal Information Section
+        const personalInfo = `
+          ${dateField('Date of birth', u.dateOfBirth)}
+          ${line('Age', u.age ? String(u.age) : '—')}
+          ${line('Marital Status', u.maritalStatus || '—')}
+          ${line('Occupation', u.occupation || '—')}
           ${line('Address', u.address || '—')}
-          ${line('Date of birth', u.dateOfBirth || '—')}
-          ${line('Appointments on file', String(u.appointments?.length ?? 0))}
+        `;
+        
+        // Emergency Contact Section
+        const emergencyInfo = `
+          ${line('Emergency Contact Person', u.emergencyContactPerson || '—')}
+          ${line('Emergency Contact Number', u.emergencyContactNumber || '—')}
+        `;
+        
+        // Appointment Information
+        const appointmentCount = String(u.appointments?.length ?? 0);
+        
+        body.innerHTML = `<dl class="user-detail-dl">
+          <dt style="font-size:12px; text-transform:uppercase; color:#6b7280; margin-top:0; margin-bottom:8px;">Basic Information</dt>
+          ${basicInfo}
+          <dt style="font-size:12px; text-transform:uppercase; color:#6b7280; margin-top:14px; margin-bottom:8px;">Personal Details</dt>
+          ${personalInfo}
+          <dt style="font-size:12px; text-transform:uppercase; color:#6b7280; margin-top:14px; margin-bottom:8px;">Emergency Contact</dt>
+          ${emergencyInfo}
+          <dt style="font-size:12px; text-transform:uppercase; color:#6b7280; margin-top:14px; margin-bottom:8px;">Appointments</dt>
+          ${line('Total appointments', appointmentCount)}
         </dl>`;
       } catch (e) {
         console.error(e);
