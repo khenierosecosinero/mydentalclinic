@@ -21,4 +21,4 @@ A web-based system that allows patients to book and manage dental appointments o
 3. Open in browser
 
 ## Author
-[Your Name]
+Khenierose L. Cosinero
